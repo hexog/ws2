@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Ws2pg.Extensions.DependencyInjection;
 
-namespace Ws2pg.Extensions.DependencyInjection;
+// ReSharper disable once CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class AttributeServicesServiceCollectionExtensions
 {
