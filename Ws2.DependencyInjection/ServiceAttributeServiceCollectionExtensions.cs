@@ -7,7 +7,7 @@ using Ws2.DependencyInjection;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class LifetimeAttributeServiceCollectionExtensions
+public static class ServiceAttributeServiceCollectionExtensions
 {
 	public static IServiceCollection AddServicesByAttributes(this IServiceCollection serviceCollection,
 		params Assembly[] assembliesToAdd)

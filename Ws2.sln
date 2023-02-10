@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection.Tests", "Ws2.DependencyInjection.Tests\Ws2.DependencyInjection.Tests.csproj", "{C4825713-D547-4B77-84F3-C6C171A68EF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Data", "Ws2.Data\Ws2.Data.csproj", "{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Data.Tests", "Ws2.Data.Tests\Ws2.Data.Tests.csproj", "{333DB4CA-CF29-45C4-996E-50A169B8CA87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{C4825713-D547-4B77-84F3-C6C171A68EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4825713-D547-4B77-84F3-C6C171A68EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4825713-D547-4B77-84F3-C6C171A68EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{333DB4CA-CF29-45C4-996E-50A169B8CA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{333DB4CA-CF29-45C4-996E-50A169B8CA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{333DB4CA-CF29-45C4-996E-50A169B8CA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{333DB4CA-CF29-45C4-996E-50A169B8CA87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
