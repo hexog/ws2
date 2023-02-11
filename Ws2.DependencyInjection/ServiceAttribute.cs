@@ -2,7 +2,7 @@
 
 namespace Ws2.DependencyInjection;
 
-[AttributeUsage(AttributeTargets.Class, Inherited = true)]
+[AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
 public abstract class ServiceAttribute : Attribute
 {
 	protected ServiceAttribute(Type? service = null)
