@@ -6,7 +6,7 @@ namespace Ws2.Data;
 
 public static class DbContextUtilities
 {
-	public static void AddTables(ModelBuilder modelBuilder, params Assembly[] assemblies)
+	public static void AddTables(this ModelBuilder modelBuilder, params Assembly[] assemblies)
 	{
 		foreach (var type in assemblies.SelectMany(x => x.DefinedTypes))
 		{

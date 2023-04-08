@@ -4,35 +4,35 @@ namespace Ws2.Data;
 
 public class EntityHandler<TEntity> where TEntity : class
 {
-	private readonly DbContext dbContext;
+	protected DbContext DbContext { get; }
 
 	public EntityHandler(DbContextAccessor dbContextAccessor)
 	{
-		dbContext = dbContextAccessor.DbContext;
+		DbContext = dbContextAccessor.DbContext;
 	}
 
 	public virtual ValueTask<TEntity?> FindAsync<TKey>(TKey key)
 	{
-		return dbContext.Set<TEntity>().FindAsync(key);
+		return DbContext.Set<TEntity>().FindAsync(key);
 	}
 
 	public virtual Task AddAsync(TEntity entity)
 	{
-		dbContext.Set<TEntity>().Add(entity);
-		return dbContext.SaveChangesAsync();
+		DbContext.Set<TEntity>().Add(entity);
+		return DbContext.SaveChangesAsync();
 	}
 
 	public virtual Task UpdateAsync(TEntity entity)
 	{
-		dbContext.Set<TEntity>().Update(entity);
-		return dbContext.SaveChangesAsync();
+		DbContext.Set<TEntity>().Update(entity);
+		return DbContext.SaveChangesAsync();
 	}
 
 	public virtual Task RemoveAsync(TEntity entity)
 	{
-		dbContext.Set<TEntity>().Remove(entity);
-		return dbContext.SaveChangesAsync();
+		DbContext.Set<TEntity>().Remove(entity);
+		return DbContext.SaveChangesAsync();
 	}
 
-	public IQueryable<TEntity> Query => dbContext.Set<TEntity>();
+	public IQueryable<TEntity> Query => DbContext.Set<TEntity>();
 }
