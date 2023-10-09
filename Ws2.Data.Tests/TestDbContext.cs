@@ -7,7 +7,7 @@ public class TestDbContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);
-		DbContextUtilities.AddTables(modelBuilder, typeof(TestDbContext).Assembly);
+		modelBuilder.ApplyConfigurationsFromAssembly(typeof(TestDbContext).Assembly);
 	}
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

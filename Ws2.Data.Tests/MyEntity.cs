@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Ws2.Data.Tests;
 
@@ -19,4 +21,11 @@ public class MyEntity
 	public Guid MyRelatedEntityId { get; set; }
 
 	public MyRelatedEntity MyRelatedEntity { get; set; } = null!;
+}
+
+public class MyEntityTypeConfiguration : IEntityTypeConfiguration<MyEntity>
+{
+	public void Configure(EntityTypeBuilder<MyEntity> builder)
+	{
+	}
 }
