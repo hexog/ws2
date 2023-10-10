@@ -35,6 +35,12 @@ public class TestEntityHandler
 		testDbContext.SaveChanges();
 	}
 
+	[OneTimeTearDown]
+	public void OneTimeTearDown()
+	{
+		testDbContext.Dispose();
+	}
+
 	[SetUp]
 	public void Setup()
 	{
