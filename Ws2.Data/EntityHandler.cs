@@ -4,7 +4,7 @@ namespace Ws2.Data;
 
 public class EntityHandler<TEntity> where TEntity : class
 {
-	protected DbContext DbContext { get; }
+	public DbContext DbContext { get; }
 
 	public EntityHandler(DbContextAccessor dbContextAccessor)
 	{
