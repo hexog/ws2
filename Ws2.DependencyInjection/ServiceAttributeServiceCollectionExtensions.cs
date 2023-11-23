@@ -58,7 +58,7 @@ public static class ServiceAttributeServiceCollectionExtensions
 		{
 			if (serviceAttribute.Service is not null)
 			{
-				serviceCollection.TryAdd(new ServiceDescriptor(serviceAttribute.Service,
+				serviceCollection.TryAddEnumerable(new ServiceDescriptor(serviceAttribute.Service,
 					p => p.GetRequiredService(type), ServiceLifetime.Singleton));
 			}
 		}
