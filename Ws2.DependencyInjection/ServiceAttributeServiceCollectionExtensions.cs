@@ -58,12 +58,20 @@ public static class ServiceAttributeServiceCollectionExtensions
         serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
         foreach (var serviceAttribute in serviceAttributes)
         {
-            var factory = context.GetSingletonInstanceFactory(type);
-            if (serviceAttribute.Service is { } service)
+            if (serviceAttribute.Service is not null)
             {
-                serviceCollection.TryAddEnumerable(
-                    ServiceDescriptor.Singleton(serviceAttribute.Service, factory)
-                );
+                Debug.Assert(serviceAttribute is SingletonServiceAttribute);
+                var singletonServiceAttribute = (SingletonServiceAttribute)serviceAttribute;
+                if (singletonServiceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
+                {
+                    serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceAttribute.Service, type));
+                }
+                else
+                {
+                    serviceCollection.TryAddEnumerable(
+                        ServiceDescriptor.Singleton(serviceAttribute.Service, context.GetSingletonInstanceFactory(type))
+                    );
+                }
             }
         }
     }
