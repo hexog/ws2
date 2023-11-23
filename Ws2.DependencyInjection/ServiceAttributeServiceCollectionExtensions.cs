@@ -11,6 +11,8 @@ public static class ServiceAttributeServiceCollectionExtensions
     public static IServiceCollection AddServicesByAttributes(this IServiceCollection serviceCollection,
         params Assembly[] assembliesToAdd)
     {
+        var context = new ServiceAttributeBuildingContext();
+
         var types = assembliesToAdd
             .SelectMany(x => x.DefinedTypes);
 
@@ -35,7 +37,7 @@ public static class ServiceAttributeServiceCollectionExtensions
 
             if (lifetime == ServiceLifetime.Singleton)
             {
-                AddSingletonService(serviceCollection, type, serviceAttributes);
+                AddSingletonService(serviceCollection, type, serviceAttributes, context);
             }
             else
             {
@@ -51,14 +53,17 @@ public static class ServiceAttributeServiceCollectionExtensions
     }
 
     private static void AddSingletonService(IServiceCollection serviceCollection, TypeInfo type,
-        ServiceAttribute[] serviceAttributes)
+        ServiceAttribute[] serviceAttributes, ServiceAttributeBuildingContext context)
     {
         serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
         foreach (var serviceAttribute in serviceAttributes)
         {
-            if (serviceAttribute.Service is not null)
+            var factory = context.GetSingletonInstanceFactory(type);
+            if (serviceAttribute.Service is { } service)
             {
-                serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceAttribute.Service, type));
+                serviceCollection.TryAddEnumerable(
+                    ServiceDescriptor.Singleton(serviceAttribute.Service, factory)
+                );
             }
         }
     }
