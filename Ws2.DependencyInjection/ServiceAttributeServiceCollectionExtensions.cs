@@ -8,13 +8,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceAttributeServiceCollectionExtensions
 {
-    public static IServiceCollection AddServicesByAttributes(this IServiceCollection serviceCollection,
-        params Assembly[] assembliesToAdd)
+    public static IServiceCollection AddServicesByAttributesFromTypes(
+        this IServiceCollection serviceCollection,
+        IEnumerable<Type> types
+    )
     {
         var context = new ServiceAttributeBuildingContext();
-
-        var types = assembliesToAdd
-            .SelectMany(x => x.DefinedTypes);
 
         foreach (var type in types)
         {
@@ -52,8 +51,21 @@ public static class ServiceAttributeServiceCollectionExtensions
         return serviceCollection;
     }
 
-    private static void AddSingletonService(IServiceCollection serviceCollection, TypeInfo type,
-        ServiceAttribute[] serviceAttributes, ServiceAttributeBuildingContext context)
+    public static IServiceCollection AddServicesByAttributes(
+        this IServiceCollection serviceCollection,
+        params Assembly[] assembliesToAdd
+    )
+    {
+        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        return serviceCollection.AddServicesByAttributesFromTypes(types);
+    }
+
+    private static void AddSingletonService(
+        IServiceCollection serviceCollection,
+        Type type,
+        ServiceAttribute[] serviceAttributes,
+        ServiceAttributeBuildingContext context
+    )
     {
         serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
         foreach (var serviceAttribute in serviceAttributes)
