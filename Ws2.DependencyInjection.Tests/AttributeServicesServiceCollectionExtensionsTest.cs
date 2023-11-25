@@ -10,10 +10,8 @@ public class AttributeServicesServiceCollectionExtensionsTest
 	[SetUp]
 	public void Setup()
 	{
-		var hostBuilder = Host.CreateDefaultBuilder();
-
-		hostBuilder.ConfigureServices(
-			x => x.AddServicesByAttributes(typeof(AttributeServicesServiceCollectionExtensionsTest).Assembly));
+		var hostBuilder = Host.CreateApplicationBuilder();
+		hostBuilder.Services.AddServicesByAttributes(typeof(AttributeServicesServiceCollectionExtensionsTest).Assembly);
 
 		var app = hostBuilder.Build();
 		serviceProvider = app.Services;
