@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Ws2.DependencyInjection.Tests;
 
-public class AttributeServicesServiceCollectionExtensionsTest
+public class ServiceAttributeServiceCollectionExtensionsTest
 {
 	private IServiceProvider serviceProvider = null!;
 
@@ -11,7 +11,7 @@ public class AttributeServicesServiceCollectionExtensionsTest
 	public void Setup()
 	{
 		var hostBuilder = Host.CreateApplicationBuilder();
-		hostBuilder.Services.AddServicesByAttributes(typeof(AttributeServicesServiceCollectionExtensionsTest).Assembly);
+		hostBuilder.Services.AddServicesByAttributes(typeof(ServiceAttributeServiceCollectionExtensionsTest).Assembly);
 
 		var app = hostBuilder.Build();
 		serviceProvider = app.Services;
