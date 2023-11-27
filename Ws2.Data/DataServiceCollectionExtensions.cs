@@ -10,9 +10,12 @@ public static class DataServiceCollectionExtensions
 	public static IServiceCollection AddEntityHandlers<TDbContext>(this IServiceCollection serviceCollection)
 		where TDbContext : DbContext
 	{
-		serviceCollection.TryAdd(new ServiceDescriptor(typeof(DbContextAccessor),
+		serviceCollection.TryAdd(new ServiceDescriptor(
+			typeof(DbContextAccessor),
 			p => new DbContextAccessor(p.GetRequiredService<TDbContext>()),
-			ServiceLifetime.Scoped));
+			ServiceLifetime.Scoped
+		));
+
 		serviceCollection.AddScoped(typeof(EntityHandler<>), typeof(EntityHandler<>));
 		return serviceCollection;
 	}
