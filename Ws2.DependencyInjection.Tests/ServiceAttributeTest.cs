@@ -93,10 +93,9 @@ public class ServiceAttributeTest
     [Test]
     public void TestGetSingletonServiceReturnsSameInstance()
     {
-        using var serviceScope = serviceProvider.CreateScope();
-        var typeInstance = serviceScope.ServiceProvider.GetService(typeNameToType["SingletonService"]);
+        var typeInstance = serviceProvider.GetService(typeNameToType["SingletonService"]);
         typeInstance.Should().NotBeNull();
-        var anotherTypeInstance = serviceScope.ServiceProvider.GetService(typeNameToType["SingletonService"]);
+        var anotherTypeInstance = serviceProvider.GetService(typeNameToType["SingletonService"]);
         anotherTypeInstance.Should().NotBeNull();
 
         ReferenceEquals(typeInstance, anotherTypeInstance).Should()
@@ -106,9 +105,8 @@ public class ServiceAttributeTest
     [Test]
     public void TestGetSingletonServiceMultipleInterfacesReturnsSameInstance()
     {
-        using var serviceScope = serviceProvider.CreateScope();
-        var typeInstanceA = serviceScope.ServiceProvider.GetService(typeNameToType["ISingletonMultipleInterfacesA"]);
-        var typeInstance1 = serviceScope.ServiceProvider.GetService(typeNameToType["ISingletonMultipleInterfaces1"]);
+        var typeInstanceA = serviceProvider.GetService(typeNameToType["ISingletonMultipleInterfacesA"]);
+        var typeInstance1 = serviceProvider.GetService(typeNameToType["ISingletonMultipleInterfaces1"]);
         typeInstanceA.Should().NotBeNull();
         typeInstance1.Should().NotBeNull();
         ReferenceEquals(typeInstanceA, typeInstance1).Should().BeTrue("Default singleton returns same type instance");
@@ -117,9 +115,8 @@ public class ServiceAttributeTest
     [Test]
     public void TestGetSingletonServiceMultipleInterfacesWithOwnInstanceReturnsDifferentInstance()
     {
-        using var serviceScope = serviceProvider.CreateScope();
-        var typeInstanceA = serviceScope.ServiceProvider.GetService(typeNameToType["ISingletonWithOwnInstanceA"]);
-        var typeInstance1 = serviceScope.ServiceProvider.GetService(typeNameToType["ISingletonWithOwnInstance1"]);
+        var typeInstanceA = serviceProvider.GetService(typeNameToType["ISingletonWithOwnInstanceA"]);
+        var typeInstance1 = serviceProvider.GetService(typeNameToType["ISingletonWithOwnInstance1"]);
         typeInstanceA.Should().NotBeNull();
         typeInstance1.Should().NotBeNull();
         ReferenceEquals(typeInstanceA, typeInstance1).Should().BeFalse("Default singleton returns same type instance");
