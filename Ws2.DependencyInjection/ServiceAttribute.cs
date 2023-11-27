@@ -52,29 +52,19 @@ public class ScopedServiceAttribute<TService> : ScopedServiceAttribute
 
 public class SingletonServiceAttribute : ServiceAttribute
 {
-    public SingletonServiceInstanceSharing InstanceSharing { get; set; }
+    public SingletonServiceInstanceSharing InstanceSharing { get; set; } =
+        SingletonServiceInstanceSharing.SharedInstance;
 
-    public SingletonServiceAttribute(
-        SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
-    )
+    public SingletonServiceAttribute()
     {
-        InstanceSharing = singletonServiceInstanceSharing;
     }
 
-    public SingletonServiceAttribute(
-        Type service,
-        SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
-    ) : base(service)
+    public SingletonServiceAttribute(Type service) : base(service)
     {
-        InstanceSharing = singletonServiceInstanceSharing;
     }
 
-    public SingletonServiceAttribute(
-        string serviceTypeName,
-        SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
-    ) : base(serviceTypeName)
+    public SingletonServiceAttribute(string serviceTypeName) : base(serviceTypeName)
     {
-        InstanceSharing = singletonServiceInstanceSharing;
     }
 
 
@@ -89,9 +79,7 @@ public enum SingletonServiceInstanceSharing
 
 public class SingletonServiceAttribute<TService> : SingletonServiceAttribute
 {
-    public SingletonServiceAttribute(
-        SingletonServiceInstanceSharing instanceSharing = SingletonServiceInstanceSharing.SharedInstance
-    ) : base(typeof(TService), instanceSharing)
+    public SingletonServiceAttribute() : base(typeof(TService))
     {
     }
 }
