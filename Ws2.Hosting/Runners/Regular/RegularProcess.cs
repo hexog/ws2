@@ -33,7 +33,7 @@ public abstract class RegularProcess<TOptions> : BackgroundService
             {
                 var pauseTask = state.PauseTask;
                 Logger.LogInformation("Paused regular process {ProcessName}", processName);
-                await pauseTask;
+                await pauseTask.ConfigureAwait(false);
                 Logger.LogInformation("Unpaused regular process: {ProcessName}", processName);
                 continue;
             }
@@ -42,12 +42,12 @@ public abstract class RegularProcess<TOptions> : BackgroundService
             {
                 if (options.Period < TimeSpan.FromMinutes(1))
                 {
-                    await RunAsync(stoppingToken);
+                    await RunAsync(stoppingToken).ConfigureAwait(false);
                 }
                 else
                 {
                     Logger.LogInformation("Executing regular process {ProcessName}", processName);
-                    await RunAsync(stoppingToken);
+                    await RunAsync(stoppingToken).ConfigureAwait(false);
                     Logger.LogInformation("Completed execution of regular process {ProcessName}", processName);
                 }
             }
@@ -63,7 +63,7 @@ public abstract class RegularProcess<TOptions> : BackgroundService
 
             try
             {
-                await Task.Delay(options.Period, state.RestartToken);
+                await Task.Delay(options.Period, state.RestartToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -80,7 +80,7 @@ public abstract class RegularProcess<TOptions> : BackgroundService
 
         try
         {
-            await InnerExecuteAsync(stoppingToken);
+            await InnerExecuteAsync(stoppingToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException e)
         {
