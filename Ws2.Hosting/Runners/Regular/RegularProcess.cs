@@ -160,7 +160,8 @@ public abstract class RegularProcess<TOptions> : BackgroundService
         {
             lock (lockObject)
             {
-                pauseTaskSource?.SetCanceled(RestartToken);
+                Debug.Assert(processStoppingToken is not null);
+                pauseTaskSource?.SetCanceled(processStoppingToken.Value);
             }
         }
 
