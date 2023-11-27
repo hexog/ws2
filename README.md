@@ -1,5 +1,7 @@
 # Ws2
 
+Common utilities for .net projects.
+
 ## Usage
 
 1. Clone:
