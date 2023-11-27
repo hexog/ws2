@@ -133,6 +133,25 @@ public class ServiceAttributeTest
         ReferenceEquals(typeInstanceA, typeInstanceB).Should().BeFalse();
     }
 
+    [Test]
+    public void TestRegisterMixedServicesTypeThrows()
+    {
+        var badServiceCollection = new ServiceCollection();
+
+        Assert.Throws<ArgumentException>(() =>
+            badServiceCollection.AddServicesByAttributes(
+                CreateTestAssembly(GetBadTypes()).Assembly
+            )
+        );
+
+        static IEnumerable<TypeDescription> GetBadTypes()
+        {
+            yield return new TypeDescription("BadMixedService")
+                .AddScopedService("IScopedBadMixedService")
+                .AddSingletonService("ISingletonBadMixedService");
+        }
+    }
+
     #region Test assembly creation
 
     private const TypeAttributes DefaultTypeAttributes = TypeAttributes.Public | TypeAttributes.AutoClass;
