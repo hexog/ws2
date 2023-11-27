@@ -30,7 +30,8 @@ public static class ServiceAttributeServiceCollectionExtensions
 
             if (serviceAttributes.Any(x => x.Lifetime != lifetime))
             {
-                continue;
+                var lifetimes = string.Join(',', serviceAttributes.Select(x => x.Lifetime).Distinct());
+                throw new ArgumentException($"Type {type.Name} is registered in different scopes: {lifetimes}");
             }
 
             if (lifetime == ServiceLifetime.Singleton)
@@ -77,13 +78,6 @@ public static class ServiceAttributeServiceCollectionExtensions
         serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
         foreach (var serviceAttribute in serviceAttributes)
         {
-            if (serviceAttribute is not SingletonServiceAttribute singletonServiceAttribute)
-            {
-                throw new ArgumentException(
-                    $"Type {type.Name} is registered in different scopes: Singleton, {serviceAttribute.Lifetime.ToString()}"
-                );
-            }
-
             var serviceType = context.FindServiceType(serviceAttribute);
             if (serviceType is null)
             {
@@ -91,6 +85,8 @@ public static class ServiceAttributeServiceCollectionExtensions
                 continue;
             }
 
+            var singletonServiceAttribute = serviceAttribute as SingletonServiceAttribute;
+            Debug.Assert(singletonServiceAttribute is not null);
             if (singletonServiceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
             {
                 serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceType, type));
