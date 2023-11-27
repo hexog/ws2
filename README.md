@@ -30,3 +30,44 @@ dotnet add $ProjectPath reference submodules/ws2/Ws2.Hosting
 ```bash
 git submodule update --remote --recursive
 ```
+
+### Ws2.DependencyInjection
+
+> Program.cs
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddServicesByAttributes(typeof(Program).Assembly);
+```
+
+> MyService.cs
+
+```csharp
+public interface IMyInterface
+{
+}
+
+[ScopedService<IMyInterface>]
+public class MyService : IMyInterface
+{
+}
+
+[SingletonService]
+public class SomeService
+{
+}
+
+[ScopedService]
+public class SomeScopedService
+{
+    public SomeScopedService(IMyInterface myService, SomeService someService)
+    {
+    }
+}
+```
+
+Available attributes ([source](Ws2.DependencyInjection/ServiceAttribute.cs)):
+
+- `[ScopedService]`
+- `[SingletonService]`
+- `[TransientService]`
