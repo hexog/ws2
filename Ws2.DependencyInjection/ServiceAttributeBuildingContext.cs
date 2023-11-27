@@ -5,8 +5,77 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Ws2.DependencyInjection;
 
-public class ServiceAttributeBuildingContext
+internal class ServiceAttributeBuildingContext
 {
+    private readonly IReadOnlyList<Type> types;
+    private readonly ILookup<string, Type> typesByName;
+    private readonly Dictionary<string, Type> typesByFullName;
+
+    private ServiceAttributeBuildingContext(
+        IReadOnlyList<Type> types,
+        ILookup<string, Type> typesByName,
+        Dictionary<string, Type> typesByFullName
+    )
+    {
+        this.typesByName = typesByName;
+        this.typesByFullName = typesByFullName;
+        this.types = types;
+    }
+
+    public static ServiceAttributeBuildingContext FromTypes(IEnumerable<Type> types)
+    {
+        var typesCopy = types.ToList();
+
+        return new ServiceAttributeBuildingContext(
+            typesCopy,
+            typesCopy.ToLookup(x => x.Name),
+            typesCopy
+                .Select(x => (Type: x, x.FullName))
+                .Where(x => x.FullName is not null)
+                .ToDictionary(x => x.FullName!, x => x.Type)
+        );
+    }
+
+    public IEnumerable<Type> Types => types;
+
+    public Type? FindServiceType(ServiceAttribute serviceAttribute)
+    {
+        if (serviceAttribute.Service is not null)
+        {
+            return serviceAttribute.Service;
+        }
+
+        return FindTypeByName(serviceAttribute.ServiceTypeName);
+    }
+
+    public Type? FindTypeByName(string? typeNameOrFullyQualifiedTypeName)
+    {
+        if (typeNameOrFullyQualifiedTypeName is null)
+        {
+            return null;
+        }
+
+        if (typesByFullName.TryGetValue(typeNameOrFullyQualifiedTypeName, out var type))
+        {
+            return type;
+        }
+
+        var typesWithName = typesByName[typeNameOrFullyQualifiedTypeName].Take(2).ToArray();
+        if (typesByName.Count > 1)
+        {
+            throw new ArgumentException($"Multiple types found with name {typeNameOrFullyQualifiedTypeName}");
+        }
+
+        if (typesWithName.Length == 0)
+        {
+            return typesWithName[0];
+        }
+
+        return null;
+    }
+
+    #region Singleton service creation
+
     private MethodInfo? getRequiredServiceMethodInfo;
 
     public MethodInfo GetRequiredServiceMethodInfo =>
@@ -66,4 +135,6 @@ public class ServiceAttributeBuildingContext
         singletonInstanceFactoryCache[implementation] = factoryFunc;
         return factoryFunc;
     }
+
+    #endregion
 }

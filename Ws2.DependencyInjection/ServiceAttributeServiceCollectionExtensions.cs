@@ -13,14 +13,13 @@ public static class ServiceAttributeServiceCollectionExtensions
         IEnumerable<Type> types
     )
     {
-        var context = new ServiceAttributeBuildingContext();
+        var context = ServiceAttributeBuildingContext.FromTypes(types);
 
-        foreach (var type in types)
+        foreach (var type in context.Types)
         {
-            var serviceAttributes =
-                type.GetCustomAttributes(typeof(ServiceAttribute)).Cast<ServiceAttribute>().ToArray();
+            var serviceAttributes = type.GetCustomAttributes<ServiceAttribute>().ToList();
 
-            if (serviceAttributes.Length == 0)
+            if (serviceAttributes.Count == 0)
             {
                 continue;
             }
@@ -42,7 +41,7 @@ public static class ServiceAttributeServiceCollectionExtensions
             {
                 foreach (var serviceAttribute in serviceAttributes)
                 {
-                    var service = serviceAttribute.Service ?? type;
+                    var service = context.FindServiceType(serviceAttribute) ?? type;
                     serviceCollection.TryAdd(new ServiceDescriptor(service, type, lifetime));
                 }
             }
@@ -60,30 +59,47 @@ public static class ServiceAttributeServiceCollectionExtensions
         return serviceCollection.AddServicesByAttributesFromTypes(types);
     }
 
+    public static IServiceCollection AddServicesByAttributes(
+        this IServiceCollection serviceCollection,
+        Assembly assembly
+    )
+    {
+        return serviceCollection.AddServicesByAttributesFromTypes(assembly.DefinedTypes);
+    }
+
     private static void AddSingletonService(
         IServiceCollection serviceCollection,
         Type type,
-        ServiceAttribute[] serviceAttributes,
+        IEnumerable<ServiceAttribute> serviceAttributes,
         ServiceAttributeBuildingContext context
     )
     {
         serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
         foreach (var serviceAttribute in serviceAttributes)
         {
-            if (serviceAttribute.Service is not null)
+            if (serviceAttribute is not SingletonServiceAttribute singletonServiceAttribute)
             {
-                Debug.Assert(serviceAttribute is SingletonServiceAttribute);
-                var singletonServiceAttribute = (SingletonServiceAttribute)serviceAttribute;
-                if (singletonServiceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
-                {
-                    serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceAttribute.Service, type));
-                }
-                else
-                {
-                    serviceCollection.TryAddEnumerable(
-                        ServiceDescriptor.Singleton(serviceAttribute.Service, context.GetSingletonInstanceFactory(type))
-                    );
-                }
+                throw new ArgumentException(
+                    $"Type {type.Name} is registered in different scopes: Singleton, {serviceAttribute.Lifetime.ToString()}"
+                );
+            }
+
+            var serviceType = context.FindServiceType(serviceAttribute);
+            if (serviceType is null)
+            {
+                // already registered
+                continue;
+            }
+
+            if (singletonServiceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
+            {
+                serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceType, type));
+            }
+            else
+            {
+                serviceCollection.TryAddEnumerable(
+                    ServiceDescriptor.Singleton(serviceType, context.GetSingletonInstanceFactory(type))
+                );
             }
         }
     }

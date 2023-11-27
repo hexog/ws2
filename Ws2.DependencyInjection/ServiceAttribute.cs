@@ -5,18 +5,38 @@ namespace Ws2.DependencyInjection;
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
 public abstract class ServiceAttribute : Attribute
 {
-    protected ServiceAttribute(Type? service = null)
+    protected ServiceAttribute()
+    {
+    }
+
+    protected ServiceAttribute(Type service)
     {
         Service = service;
     }
 
+    protected ServiceAttribute(string serviceTypeName)
+    {
+        ServiceTypeName = serviceTypeName;
+    }
+
     public Type? Service { get; set; }
+
+    public string? ServiceTypeName { get; set; }
+
     public abstract ServiceLifetime Lifetime { get; }
 }
 
 public class ScopedServiceAttribute : ServiceAttribute
 {
-    public ScopedServiceAttribute(Type? service = null) : base(service)
+    public ScopedServiceAttribute()
+    {
+    }
+
+    public ScopedServiceAttribute(Type service) : base(service)
+    {
+    }
+
+    public ScopedServiceAttribute(string serviceTypeName) : base(serviceTypeName)
     {
     }
 
@@ -35,12 +55,28 @@ public class SingletonServiceAttribute : ServiceAttribute
     public SingletonServiceInstanceSharing InstanceSharing { get; set; }
 
     public SingletonServiceAttribute(
-        Type? service = null,
+        SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
+    )
+    {
+        InstanceSharing = singletonServiceInstanceSharing;
+    }
+
+    public SingletonServiceAttribute(
+        Type service,
         SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
     ) : base(service)
     {
         InstanceSharing = singletonServiceInstanceSharing;
     }
+
+    public SingletonServiceAttribute(
+        string serviceTypeName,
+        SingletonServiceInstanceSharing singletonServiceInstanceSharing = SingletonServiceInstanceSharing.SharedInstance
+    ) : base(serviceTypeName)
+    {
+        InstanceSharing = singletonServiceInstanceSharing;
+    }
+
 
     public override ServiceLifetime Lifetime => ServiceLifetime.Singleton;
 }
@@ -62,7 +98,15 @@ public class SingletonServiceAttribute<TService> : SingletonServiceAttribute
 
 public class TransientServiceAttribute : ServiceAttribute
 {
-    public TransientServiceAttribute(Type? service = null) : base(service)
+    public TransientServiceAttribute()
+    {
+    }
+
+    public TransientServiceAttribute(Type service) : base(service)
+    {
+    }
+
+    public TransientServiceAttribute(string serviceTypeName) : base(serviceTypeName)
     {
     }
 
