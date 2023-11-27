@@ -1,6 +1,6 @@
 # Ws2
 
-Common utilities for .net projects.
+Common utilities for .NET projects.
 
 ## Usage
 
