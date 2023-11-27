@@ -99,10 +99,10 @@ public abstract class RegularProcess<TOptions> : BackgroundService
         private CancellationToken? processStoppingToken;
         private CancellationTokenSource? restartTokenSource;
         private TaskCompletionSource? pauseTaskSource;
-        private IRegularProcessOptions? cachedOptions;
+        private TOptions? cachedOptions;
         private readonly object lockObject = new();
 
-        public void Initialize(IRegularProcessOptions options)
+        public void Initialize(TOptions options)
         {
             cachedOptions = options;
             if (!options.IsEnabled)
