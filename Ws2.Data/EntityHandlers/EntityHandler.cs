@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Ws2.Data;
+namespace Ws2.Data.EntityHandlers;
 
 public class EntityHandler<TEntity> where TEntity : class
 {

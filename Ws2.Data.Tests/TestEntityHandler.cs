@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Ws2.Data.EntityHandlers;
 
 namespace Ws2.Data.Tests;
 
