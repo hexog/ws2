@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace Ws2.Hosting.Runners.Queue;
 
 public abstract class QueueProcessor<TOptions, TMessage> : BackgroundService
-    where TOptions : class, IQueueProcessingOptions
+    where TOptions : class, IQueueProcessorOptions
 {
     protected readonly ILogger Logger;
     private readonly Channel<TMessage> channel;

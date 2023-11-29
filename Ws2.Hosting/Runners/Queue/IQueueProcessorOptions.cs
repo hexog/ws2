@@ -1,6 +1,6 @@
 namespace Ws2.Hosting.Runners.Queue;
 
-public interface IQueueProcessingOptions
+public interface IQueueProcessorOptions
 {
     int? ChannelCapacity { get; }
 
