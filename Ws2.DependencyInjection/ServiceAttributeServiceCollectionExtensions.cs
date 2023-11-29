@@ -29,11 +29,34 @@ public static class ServiceAttributeServiceCollectionExtensions
             typeList
                 .Where(x => x.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
                 .Select(x => (IServiceAttributeRegistrar)Activator.CreateInstance(x)!)
+                .ToList(),
+            typeList
+                .Where(x => x.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)))
+                .Select(x => (IServiceTypeImplementationRegistrar)Activator.CreateInstance(x)!)
                 .ToList()
         );
 
         foreach (var type in context.Types)
         {
+            var interfaces = type.GetInterfaces();
+            foreach (var baseType in interfaces)
+            {
+                var registrar = context.FindServiceImplementationRegistrar(baseType);
+                if (registrar is not null)
+                {
+                    registrar.Register(context, type);
+                }
+            }
+
+            if (type.BaseType is not null)
+            {
+                var registrar = context.FindServiceImplementationRegistrar(type.BaseType);
+                if (registrar is not null)
+                {
+                    registrar.Register(context, type);
+                }
+            }
+
             var serviceAttributes = type.GetCustomAttributes<ServiceAttribute>().ToList();
 
             if (serviceAttributes.Count == 0)

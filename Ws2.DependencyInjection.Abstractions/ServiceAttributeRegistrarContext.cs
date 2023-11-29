@@ -4,14 +4,18 @@ namespace Ws2.DependencyInjection.Abstractions;
 
 public class ServiceAttributeRegistrarContext
 {
-    private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeRegistrarByTypeCache = new();
+    private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeRegistrarCache = new();
+
+    private readonly Dictionary<Type, IServiceTypeImplementationRegistrar?> serviceTypeImplementationRegistrarCache =
+        new();
 
     public ServiceAttributeRegistrarContext(
         IServiceCollection serviceCollection,
         IReadOnlyCollection<Type> types,
         ILookup<string, Type> nameToType,
         IReadOnlyDictionary<string, Type> fullNameToType,
-        IReadOnlyCollection<IServiceAttributeRegistrar> serviceAttributeRegistrar
+        IReadOnlyCollection<IServiceAttributeRegistrar> serviceAttributeRegistrar,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars
     )
     {
         ServiceCollection = serviceCollection;
@@ -19,6 +23,7 @@ public class ServiceAttributeRegistrarContext
         NameToType = nameToType;
         FullNameToType = fullNameToType;
         ServiceAttributeRegistrar = serviceAttributeRegistrar;
+        ServiceTypeImplementationRegistrars = serviceTypeImplementationRegistrars;
     }
 
     public IServiceCollection ServiceCollection { get; }
@@ -31,16 +36,31 @@ public class ServiceAttributeRegistrarContext
 
     public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar { get; }
 
+    public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars { get; }
+
     public IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType)
     {
-        if (serviceAttributeRegistrarByTypeCache.TryGetValue(serviceAttributeType, out var registrar))
+        if (serviceAttributeRegistrarCache.TryGetValue(serviceAttributeType, out var registrar))
         {
             return registrar;
         }
 
-        registrar =  ServiceAttributeRegistrar
+        registrar = ServiceAttributeRegistrar
             .FirstOrDefault(x => x.ServiceAttributeType.IsAssignableFrom(serviceAttributeType));
-        serviceAttributeRegistrarByTypeCache[serviceAttributeType] = registrar;
+        serviceAttributeRegistrarCache[serviceAttributeType] = registrar;
+        return registrar;
+    }
+
+    public IServiceTypeImplementationRegistrar? FindServiceImplementationRegistrar(Type serviceType)
+    {
+        if (serviceTypeImplementationRegistrarCache.TryGetValue(serviceType, out var registrar))
+        {
+            return registrar;
+        }
+
+        registrar = ServiceTypeImplementationRegistrars
+            .FirstOrDefault(x => x.ServiceType.IsAssignableFrom(serviceType));
+        serviceTypeImplementationRegistrarCache[serviceType] = registrar;
         return registrar;
     }
 }
