@@ -59,6 +59,11 @@ public class ServiceAttributeTest
                     SingletonServiceInstanceSharing.OwnInstance)
                 .AddSingletonService("ISingletonWithOwnInstance1", ServiceType.Interface,
                     SingletonServiceInstanceSharing.OwnInstance);
+
+            yield return new TypeDescription("MixedService")
+                .AddScopedService("ScopedMixedService")
+                .AddTransientService("TransientMixedService")
+                .AddSingletonService("SingletonMixedService");
         }
     }
 
@@ -134,22 +139,21 @@ public class ServiceAttributeTest
     }
 
     [Test]
-    public void TestRegisterMixedServicesTypeThrows()
+    public void TestRegisterMixedServicesType()
     {
-        var badServiceCollection = new ServiceCollection();
+        using var serviceScope = serviceProvider.CreateScope();
+        var scoped = serviceScope.ServiceProvider.GetService(typeNameToType["ScopedMixedService"]);
+        scoped.Should().NotBeNull();
 
-        Assert.Throws<ArgumentException>(() =>
-            badServiceCollection.AddServicesByAttributes(
-                CreateTestAssembly(GetBadTypes()).Assembly
-            )
-        );
+        var transient = serviceScope.ServiceProvider.GetService(typeNameToType["TransientMixedService"]);
+        transient.Should().NotBeNull();
+        transient.Should().BeOfType(scoped!.GetType());
+        ReferenceEquals(scoped, transient).Should().BeFalse();
 
-        static IEnumerable<TypeDescription> GetBadTypes()
-        {
-            yield return new TypeDescription("BadMixedService")
-                .AddScopedService("IScopedBadMixedService")
-                .AddSingletonService("ISingletonBadMixedService");
-        }
+        var singleton = serviceScope.ServiceProvider.GetService(typeNameToType["SingletonMixedService"]);
+        singleton.Should().NotBeNull();
+        singleton.Should().BeOfType(scoped!.GetType());
+        ReferenceEquals(scoped, singleton).Should().BeFalse();
     }
 
     #region Test assembly creation

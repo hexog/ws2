@@ -1,19 +1,36 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Ws2.DependencyInjection;
+﻿using System.Reflection;
+using Ws2.DependencyInjection.Abstractions;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceAttributeServiceCollectionExtensions
 {
+    private static IEnumerable<Type> DefaultTypes =>
+        typeof(ServiceAttributeServiceCollectionExtensions).Assembly.DefinedTypes;
+
     public static IServiceCollection AddServicesByAttributesFromTypes(
         this IServiceCollection serviceCollection,
         IEnumerable<Type> types
     )
     {
-        var context = ServiceAttributeBuildingContext.FromTypes(types);
+        var typeList = types
+            .Concat(serviceCollection.Where(x => x.ImplementationType is not null).Select(x => x.ImplementationType!))
+            .Distinct()
+            .ToList();
+        var context = new ServiceAttributeRegistrarContext(
+            serviceCollection,
+            typeList,
+            typeList.ToLookup(x => x.Name),
+            typeList
+                .Select(x => (x.FullName, Type: x))
+                .Where(x => x.FullName is not null)
+                .ToDictionary(x => x.FullName!, x => x.Type),
+            typeList
+                .Where(x => x.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
+                .Select(x => (IServiceAttributeRegistrar)Activator.CreateInstance(x)!)
+                .ToList()
+        );
 
         foreach (var type in context.Types)
         {
@@ -24,27 +41,16 @@ public static class ServiceAttributeServiceCollectionExtensions
                 continue;
             }
 
-            var firstServiceAttribute = serviceAttributes[0];
-            var lifetime = firstServiceAttribute.Lifetime;
-            Debug.Assert(Enum.IsDefined(lifetime));
-
-            if (serviceAttributes.Any(x => x.Lifetime != lifetime))
+            foreach (var serviceAttribute in serviceAttributes)
             {
-                var lifetimes = string.Join(',', serviceAttributes.Select(x => x.Lifetime).Distinct());
-                throw new ArgumentException($"Type {type.Name} is registered in different scopes: {lifetimes}");
-            }
-
-            if (lifetime == ServiceLifetime.Singleton)
-            {
-                AddSingletonService(serviceCollection, type, serviceAttributes, context);
-            }
-            else
-            {
-                foreach (var serviceAttribute in serviceAttributes)
+                var registrar = context.FindServiceAttributeRegistrar(serviceAttribute.GetType());
+                if (registrar is null)
                 {
-                    var service = context.FindServiceType(serviceAttribute) ?? type;
-                    serviceCollection.TryAdd(new ServiceDescriptor(service, type, lifetime));
+                    throw new ArgumentException(
+                        $"Registrar not found for service attribute: {serviceAttribute.GetType().Name}");
                 }
+
+                registrar.Register(context, type, serviceAttribute);
             }
         }
 
@@ -56,7 +62,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         params Assembly[] assembliesToAdd
     )
     {
-        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes).Concat(DefaultTypes);
         return serviceCollection.AddServicesByAttributesFromTypes(types);
     }
 
@@ -65,38 +71,21 @@ public static class ServiceAttributeServiceCollectionExtensions
         Assembly assembly
     )
     {
-        return serviceCollection.AddServicesByAttributesFromTypes(assembly.DefinedTypes);
+        return serviceCollection.AddServicesByAttributesFromTypes(assembly.DefinedTypes.Concat(DefaultTypes));
     }
 
-    private static void AddSingletonService(
-        IServiceCollection serviceCollection,
-        Type type,
-        IEnumerable<ServiceAttribute> serviceAttributes,
-        ServiceAttributeBuildingContext context
+    public static IServiceCollection AddServicesByAttributes(
+        this IServiceCollection serviceCollection,
+        IEnumerable<Assembly> assembliesToAdd,
+        bool excludeDefaultRegistrars = false
     )
     {
-        serviceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
-        foreach (var serviceAttribute in serviceAttributes)
+        IEnumerable<Type> types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        if (!excludeDefaultRegistrars)
         {
-            var serviceType = context.FindServiceType(serviceAttribute);
-            if (serviceType is null)
-            {
-                // already registered
-                continue;
-            }
-
-            var singletonServiceAttribute = serviceAttribute as SingletonServiceAttribute;
-            Debug.Assert(singletonServiceAttribute is not null);
-            if (singletonServiceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
-            {
-                serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceType, type));
-            }
-            else
-            {
-                serviceCollection.TryAddEnumerable(
-                    ServiceDescriptor.Singleton(serviceType, context.GetSingletonInstanceFactory(type))
-                );
-            }
+            types = types.Concat(DefaultTypes);
         }
+
+        return serviceCollection.AddServicesByAttributesFromTypes(types);
     }
 }
