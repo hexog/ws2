@@ -10,10 +10,10 @@ public class SingletonServiceAttributeRegistrar :
 {
     private readonly SingletonServiceAttributeBuildingContext buildingContext = new();
 
-    public void Register(ServiceAttributeRegistrarContext context, Type type, SingletonServiceBaseAttribute serviceAttribute)
+    public void Register(IServiceAttributeRegistrarContext context, Type type, SingletonServiceBaseAttribute serviceAttribute)
     {
         context.ServiceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
-        var serviceType = context.FindServiceType(serviceAttribute);
+        var serviceType = serviceAttribute.Service ?? context.FIndType(serviceAttribute.ServiceTypeName);
         if (serviceType is null)
         {
             return;

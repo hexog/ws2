@@ -6,7 +6,7 @@ namespace Ws2.DependencyInjection.Registrars;
 public class TransientServiceAttributeRegistrar : IServiceAttributeRegistrar<TransientServiceBaseAttribute>
 {
     public void Register(
-        ServiceAttributeRegistrarContext context,
+        IServiceAttributeRegistrarContext context,
         Type type,
         TransientServiceBaseAttribute serviceAttribute
     )

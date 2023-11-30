@@ -6,7 +6,7 @@ namespace Ws2.DependencyInjection.Registrars;
 public class ScopedServiceAttributeRegistrar : IServiceAttributeRegistrar<ScopedServiceBaseAttribute>
 {
     public void Register(
-        ServiceAttributeRegistrarContext context,
+        IServiceAttributeRegistrarContext context,
         Type type,
         ScopedServiceBaseAttribute serviceAttribute
     )

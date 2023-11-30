@@ -61,7 +61,7 @@ public class MyInterfaceImplementation : IMyInterface
 
 public class MyInterfaceRegistrar : IServiceTypeImplementationRegistrar<IMyInterface>
 {
-    public void Register(ServiceAttributeRegistrarContext context, Type type)
+    public void Register(IServiceAttributeRegistrarContext context, Type type)
     {
         context.ServiceCollection.AddScoped(typeof(IMyInterface), type);
     }
@@ -81,7 +81,7 @@ public class MyInheritedType : MyBaseType
 
 public class MyBaseTypeRegistrar : IServiceTypeImplementationRegistrar<MyBaseType>
 {
-    public void Register(ServiceAttributeRegistrarContext context, Type type)
+    public void Register(IServiceAttributeRegistrarContext context, Type type)
     {
         context.ServiceCollection.AddScoped(typeof(MyBaseType), type);
     }

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Ws2.DependencyInjection;
 using Ws2.DependencyInjection.Abstractions;
 
 // ReSharper disable once CheckNamespace

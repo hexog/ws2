@@ -1,8 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
+using Ws2.DependencyInjection.Abstractions;
 
-namespace Ws2.DependencyInjection.Abstractions;
+namespace Ws2.DependencyInjection;
 
-public class ServiceAttributeRegistrarContext
+public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContext
 {
     private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeRegistrarCache = new();
 
@@ -32,11 +33,28 @@ public class ServiceAttributeRegistrarContext
 
     public ILookup<string, Type> NameToType { get; }
 
-    public IReadOnlyDictionary<string, Type> FullNameToType { get; }
+    private IReadOnlyDictionary<string, Type> FullNameToType { get; }
 
     public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar { get; }
 
     public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars { get; }
+
+    public Type? FIndType(string? typeName)
+    {
+        if (typeName is null)
+        {
+            return null;
+        }
+
+        if (FullNameToType.TryGetValue(typeName, out var service))
+        {
+            return service;
+        }
+
+        var types = NameToType[typeName];
+        return types.SingleOrDefault();
+
+    }
 
     public IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType)
     {

@@ -4,7 +4,7 @@ public interface IServiceAttributeRegistrar
 {
     Type ServiceAttributeType { get; }
 
-    void Register(ServiceAttributeRegistrarContext context, Type type, object serviceAttribute);
+    void Register(IServiceAttributeRegistrarContext context, Type type, object serviceAttribute);
 }
 
 public interface IServiceAttributeRegistrar<in TServiceAttribute> : IServiceAttributeRegistrar
@@ -13,7 +13,7 @@ public interface IServiceAttributeRegistrar<in TServiceAttribute> : IServiceAttr
     Type IServiceAttributeRegistrar.ServiceAttributeType => typeof(TServiceAttribute);
 
     void IServiceAttributeRegistrar.Register(
-        ServiceAttributeRegistrarContext context,
+        IServiceAttributeRegistrarContext context,
         Type type,
         object serviceAttribute
     )
@@ -21,5 +21,5 @@ public interface IServiceAttributeRegistrar<in TServiceAttribute> : IServiceAttr
         Register(context, type, (TServiceAttribute)serviceAttribute);
     }
 
-    void Register(ServiceAttributeRegistrarContext context, Type type, TServiceAttribute serviceAttribute);
+    void Register(IServiceAttributeRegistrarContext context, Type type, TServiceAttribute serviceAttribute);
 }

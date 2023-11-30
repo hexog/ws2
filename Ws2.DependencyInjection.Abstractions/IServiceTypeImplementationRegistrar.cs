@@ -4,7 +4,7 @@ public interface IServiceTypeImplementationRegistrar
 {
     Type ServiceType { get; }
 
-    void Register(ServiceAttributeRegistrarContext context, Type type);
+    void Register(IServiceAttributeRegistrarContext context, Type type);
 }
 
 public interface IServiceTypeImplementationRegistrar<TServiceType> : IServiceTypeImplementationRegistrar
