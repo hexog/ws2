@@ -5,7 +5,7 @@ namespace Ws2.Hosting.StartupTasks;
 
 public class StartupTaskImplementationRegistrar : IServiceTypeImplementationRegistrar<IStartupTask>
 {
-    public void Register(ServiceAttributeRegistrarContext context, Type type)
+    public void Register(IServiceAttributeRegistrarContext context, Type type)
     {
         context.ServiceCollection.AddStartupTask(type);
     }
