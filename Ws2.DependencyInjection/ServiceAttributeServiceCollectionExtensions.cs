@@ -22,11 +22,14 @@ public static class ServiceAttributeServiceCollectionExtensions
         var context = new ServiceAttributeRegistrarContext(
             serviceCollection,
             typeList,
-            typeList.ToLookup(x => x.Name),
-            typeList
-                .Select(x => (x.FullName, Type: x))
-                .Where(x => x.FullName is not null)
-                .ToDictionary(x => x.FullName!, x => x.Type),
+            new Lazy<ILookup<string, Type>>(() => typeList.ToLookup(x => x.Name)),
+            new Lazy<IReadOnlyDictionary<string, Type>>(
+                () =>
+                    typeList
+                        .Select(x => (x.FullName, Type: x))
+                        .Where(x => x.FullName is not null)
+                        .ToDictionary(x => x.FullName!, x => x.Type)
+            ),
             typeList
                 .Where(x => x.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
                 .Select(x => (IServiceAttributeRegistrar)Activator.CreateInstance(x)!)

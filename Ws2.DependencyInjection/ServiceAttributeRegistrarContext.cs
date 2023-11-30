@@ -5,6 +5,10 @@ namespace Ws2.DependencyInjection;
 
 public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContext
 {
+    private readonly Lazy<ILookup<string, Type>> nameToType;
+
+    private readonly Lazy<IReadOnlyDictionary<string, Type>> fullNameToType;
+
     private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeRegistrarCache = new();
 
     private readonly Dictionary<Type, IServiceTypeImplementationRegistrar?> serviceTypeImplementationRegistrarCache =
@@ -13,16 +17,16 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
     public ServiceAttributeRegistrarContext(
         IServiceCollection serviceCollection,
         IReadOnlyCollection<Type> types,
-        ILookup<string, Type> nameToType,
-        IReadOnlyDictionary<string, Type> fullNameToType,
+        Lazy<ILookup<string, Type>> nameToType,
+        Lazy<IReadOnlyDictionary<string, Type>> fullNameToType,
         IReadOnlyCollection<IServiceAttributeRegistrar> serviceAttributeRegistrar,
         IReadOnlyCollection<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars
     )
     {
         ServiceCollection = serviceCollection;
         Types = types;
-        NameToType = nameToType;
-        FullNameToType = fullNameToType;
+        this.nameToType = nameToType;
+        this.fullNameToType = fullNameToType;
         ServiceAttributeRegistrar = serviceAttributeRegistrar;
         ServiceTypeImplementationRegistrars = serviceTypeImplementationRegistrars;
     }
@@ -30,10 +34,6 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
     public IServiceCollection ServiceCollection { get; }
 
     public IReadOnlyCollection<Type> Types { get; }
-
-    public ILookup<string, Type> NameToType { get; }
-
-    private IReadOnlyDictionary<string, Type> FullNameToType { get; }
 
     public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar { get; }
 
@@ -46,14 +46,13 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
             return null;
         }
 
-        if (FullNameToType.TryGetValue(typeName, out var service))
+        if (fullNameToType.Value.TryGetValue(typeName, out var service))
         {
             return service;
         }
 
-        var types = NameToType[typeName];
+        var types = nameToType.Value[typeName];
         return types.SingleOrDefault();
-
     }
 
     public IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType)
