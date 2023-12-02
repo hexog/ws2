@@ -16,8 +16,16 @@ internal static class ServiceAttributeRegistrarContextExtensions
     {
         Debug.Assert(Enum.IsDefined(serviceLifetime));
         var service = serviceAttribute.Service
-            ?? context.FIndType(serviceAttribute.ServiceTypeName)
-            ?? implementation;
-        context.ServiceCollection.TryAdd(new ServiceDescriptor(service, implementation, serviceLifetime));
+            ?? context.FIndType(serviceAttribute.ServiceTypeName);
+        if (service is null)
+        {
+            context.ServiceCollection.TryAdd(
+                new ServiceDescriptor(implementation, implementation, serviceLifetime)
+            );
+        }
+        else
+        {
+            context.ServiceCollection.TryAddEnumerable(new ServiceDescriptor(service, implementation, serviceLifetime));
+        }
     }
 }
