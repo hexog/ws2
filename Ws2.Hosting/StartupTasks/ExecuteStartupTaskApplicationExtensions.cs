@@ -26,7 +26,7 @@ public static class ExecuteStartupTaskApplicationExtensions
     )
     {
         await using var serviceScope = serviceProvider.CreateAsyncScope();
-        var startupTasks = serviceProvider.GetServices<IStartupTask>();
+        var startupTasks = serviceScope.ServiceProvider.GetServices<IStartupTask>();
         await StartupTaskExecutor.ExecuteStartupTasksAsync(startupTasks, cancellationToken).ConfigureAwait(false);
     }
 }
