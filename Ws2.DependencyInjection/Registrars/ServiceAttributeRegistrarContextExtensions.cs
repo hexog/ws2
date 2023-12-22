@@ -7,7 +7,7 @@ namespace Ws2.DependencyInjection.Registrars;
 
 internal static class ServiceAttributeRegistrarContextExtensions
 {
-    public static void Register(
+    public static void RegisterByServiceAttribute(
         this IServiceAttributeRegistrarContext context,
         ServiceLifetime serviceLifetime,
         Type implementation,

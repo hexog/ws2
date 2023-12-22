@@ -24,16 +24,20 @@ public static class ServiceAttributeServiceCollectionExtensions
         foreach (var type in context.Types)
         {
             var interfaces = type.GetInterfaces();
-            foreach (var baseType in interfaces)
+            foreach (var serviceType in interfaces)
             {
-                var registrar = context.FindServiceImplementationRegistrar(baseType);
-                registrar?.Register(context, type);
+                foreach (var registrar in context.FindServiceImplementationRegistrars(serviceType))
+                {
+                    registrar.Register(context, type);
+                }
             }
 
-            if (type.BaseType is not null)
+            if (type.BaseType is { } baseType)
             {
-                var registrar = context.FindServiceImplementationRegistrar(type.BaseType);
-                registrar?.Register(context, type);
+                foreach (var registrar in context.FindServiceImplementationRegistrars(baseType))
+                {
+                    registrar.Register(context, type);
+                }
             }
 
             var serviceAttributes = type.GetCustomAttributes<ServiceAttribute>().ToList();
@@ -45,14 +49,10 @@ public static class ServiceAttributeServiceCollectionExtensions
 
             foreach (var serviceAttribute in serviceAttributes)
             {
-                var registrar = context.FindServiceAttributeRegistrar(serviceAttribute.GetType());
-                if (registrar is null)
+                foreach (var registrar in context.FindServiceAttributeRegistrars(serviceAttribute.GetType()))
                 {
-                    throw new ArgumentException(
-                        $"Registrar not found for service attribute: {serviceAttribute.GetType().Name}");
+                    registrar.Register(context, type, serviceAttribute);
                 }
-
-                registrar.Register(context, type, serviceAttribute);
             }
         }
 

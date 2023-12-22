@@ -11,6 +11,6 @@ public class ScopedServiceAttributeRegistrar : IServiceAttributeRegistrar<Scoped
         ScopedServiceBaseAttribute serviceAttribute
     )
     {
-        context.Register(serviceAttribute.Lifetime, type, serviceAttribute);
+        context.RegisterByServiceAttribute(serviceAttribute.Lifetime, type, serviceAttribute);
     }
 }

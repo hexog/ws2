@@ -13,9 +13,9 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     private readonly List<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars = new();
 
-    private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeTypeToRegistrar = new();
+    private readonly Dictionary<Type, List<IServiceAttributeRegistrar>> serviceAttributeTypeToRegistrar = new();
 
-    private readonly Dictionary<Type, IServiceTypeImplementationRegistrar?> serviceTypeImplementationToRegistrar =
+    private readonly Dictionary<Type, List<IServiceTypeImplementationRegistrar>> serviceTypeImplementationToRegistrar =
         new();
 
     public ServiceAttributeRegistrarContext(
@@ -88,40 +88,50 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
             return null;
         }
 
-        if (fullNameToType.TryGetValue(typeName, out var service) && service.SingleOrDefault() is { } singleService)
+        if (fullNameToType.TryGetValue(typeName, out var services))
         {
-            return singleService;
+            if (services.SingleOrDefault() is { } service)
+            {
+                return service;
+            }
         }
 
         var types = nameToType[typeName];
         return types.SingleOrDefault();
     }
 
-    public IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType)
+    IEnumerable<IServiceAttributeRegistrar> IServiceAttributeRegistrarContext.FindServiceAttributeRegistrars(
+        Type serviceAttributeType
+    ) => FindServiceAttributeRegistrars(serviceAttributeType);
+
+    public List<IServiceAttributeRegistrar> FindServiceAttributeRegistrars(Type serviceAttributeType)
     {
-        if (serviceAttributeTypeToRegistrar.TryGetValue(serviceAttributeType, out var registrar))
+        if (serviceAttributeTypeToRegistrar.TryGetValue(serviceAttributeType, out var registrars))
         {
-            return registrar;
+            return registrars;
         }
 
-        registrar = ServiceAttributeRegistrar.FirstOrDefault(
-            x => x.ServiceAttributeType.IsAssignableFrom(serviceAttributeType)
-        );
+        registrars = ServiceAttributeRegistrar
+            .Where(x => x.ServiceAttributeType.IsAssignableFrom(serviceAttributeType))
+            .ToList();
 
-        return serviceAttributeTypeToRegistrar[serviceAttributeType] = registrar;
+        return serviceAttributeTypeToRegistrar[serviceAttributeType] = registrars;
     }
 
-    public IServiceTypeImplementationRegistrar? FindServiceImplementationRegistrar(Type serviceType)
+    IEnumerable<IServiceTypeImplementationRegistrar> IServiceAttributeRegistrarContext.
+        FindServiceImplementationRegistrars(Type serviceType) => FindServiceImplementationRegistrars(serviceType);
+
+    public List<IServiceTypeImplementationRegistrar> FindServiceImplementationRegistrars(Type serviceType)
     {
-        if (serviceTypeImplementationToRegistrar.TryGetValue(serviceType, out var registrar))
+        if (serviceTypeImplementationToRegistrar.TryGetValue(serviceType, out var registrars))
         {
-            return registrar;
+            return registrars;
         }
 
-        registrar = ServiceTypeImplementationRegistrars.FirstOrDefault(
-            x => x.ServiceType.IsAssignableFrom(serviceType)
-        );
+        registrars = ServiceTypeImplementationRegistrars
+            .Where(x => x.ServiceType.IsAssignableFrom(serviceType))
+            .ToList();
 
-        return serviceTypeImplementationToRegistrar[serviceType] = registrar;
+        return serviceTypeImplementationToRegistrar[serviceType] = registrars;
     }
 }

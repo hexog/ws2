@@ -14,7 +14,7 @@ public interface IServiceAttributeRegistrarContext
 
     Type? FIndType(string? typeName);
 
-    IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType);
+    IEnumerable<IServiceAttributeRegistrar> FindServiceAttributeRegistrars(Type serviceAttributeType);
 
-    IServiceTypeImplementationRegistrar? FindServiceImplementationRegistrar(Type serviceType);
+    IEnumerable<IServiceTypeImplementationRegistrar> FindServiceImplementationRegistrars(Type serviceType);
 }

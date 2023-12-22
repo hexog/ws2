@@ -11,6 +11,6 @@ public class TransientServiceAttributeRegistrar : IServiceAttributeRegistrar<Tra
         TransientServiceBaseAttribute serviceAttribute
     )
     {
-        context.Register(serviceAttribute.Lifetime, type, serviceAttribute);
+        context.RegisterByServiceAttribute(serviceAttribute.Lifetime, type, serviceAttribute);
     }
 }
