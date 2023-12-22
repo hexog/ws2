@@ -33,16 +33,16 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
     {
         foreach (var type in types)
         {
-            if (type.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
+            if (type.IsAssignableTo(typeof(IServiceAttributeRegistrar)) && !type.IsAbstract)
             {
-                var serviceAttributeRegistrar = Activator.CreateInstance<IServiceAttributeRegistrar>();
+                var serviceAttributeRegistrar = (IServiceAttributeRegistrar)Activator.CreateInstance(type)!;
                 serviceAttributeRegistrars.Add(serviceAttributeRegistrar);
             }
 
-            if (type.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)))
+            if (type.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)) && !type.IsAbstract)
             {
                 var serviceTypeImplementationRegistrar =
-                    Activator.CreateInstance<IServiceTypeImplementationRegistrar>();
+                    (IServiceTypeImplementationRegistrar)Activator.CreateInstance(type)!;
                 serviceTypeImplementationRegistrars.Add(serviceTypeImplementationRegistrar);
             }
 
