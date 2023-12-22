@@ -19,26 +19,7 @@ public static class ServiceAttributeServiceCollectionExtensions
             .Concat(serviceCollection.Where(x => x.ImplementationType is not null).Select(x => x.ImplementationType!))
             .Distinct()
             .ToList();
-        var context = new ServiceAttributeRegistrarContext(
-            serviceCollection,
-            typeList,
-            new Lazy<ILookup<string, Type>>(() => typeList.ToLookup(x => x.Name)),
-            new Lazy<IReadOnlyDictionary<string, Type>>(
-                () =>
-                    typeList
-                        .Select(x => (x.FullName, Type: x))
-                        .Where(x => x.FullName is not null)
-                        .ToDictionary(x => x.FullName!, x => x.Type)
-            ),
-            typeList
-                .Where(x => x.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
-                .Select(x => (IServiceAttributeRegistrar)Activator.CreateInstance(x)!)
-                .ToList(),
-            typeList
-                .Where(x => x.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)))
-                .Select(x => (IServiceTypeImplementationRegistrar)Activator.CreateInstance(x)!)
-                .ToList()
-        );
+        var context = new ServiceAttributeRegistrarContext(serviceCollection, typeList);
 
         foreach (var type in context.Types)
         {
@@ -46,19 +27,13 @@ public static class ServiceAttributeServiceCollectionExtensions
             foreach (var baseType in interfaces)
             {
                 var registrar = context.FindServiceImplementationRegistrar(baseType);
-                if (registrar is not null)
-                {
-                    registrar.Register(context, type);
-                }
+                registrar?.Register(context, type);
             }
 
             if (type.BaseType is not null)
             {
                 var registrar = context.FindServiceImplementationRegistrar(type.BaseType);
-                if (registrar is not null)
-                {
-                    registrar.Register(context, type);
-                }
+                registrar?.Register(context, type);
             }
 
             var serviceAttributes = type.GetCustomAttributes<ServiceAttribute>().ToList();

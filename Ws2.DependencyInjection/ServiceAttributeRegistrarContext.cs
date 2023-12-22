@@ -5,39 +5,81 @@ namespace Ws2.DependencyInjection;
 
 public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContext
 {
-    private readonly Lazy<ILookup<string, Type>> nameToType;
+    private readonly Dictionary<string, List<Type>> nameToType = new();
 
-    private readonly Lazy<IReadOnlyDictionary<string, Type>> fullNameToType;
+    private readonly Dictionary<string, List<Type>> fullNameToType = new();
 
-    private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeRegistrarCache = new();
+    private readonly List<IServiceAttributeRegistrar> serviceAttributeRegistrars = new();
 
-    private readonly Dictionary<Type, IServiceTypeImplementationRegistrar?> serviceTypeImplementationRegistrarCache =
+    private readonly List<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars = new();
+
+    private readonly Dictionary<Type, IServiceAttributeRegistrar?> serviceAttributeTypeToRegistrar = new();
+
+    private readonly Dictionary<Type, IServiceTypeImplementationRegistrar?> serviceTypeImplementationToRegistrar =
         new();
 
     public ServiceAttributeRegistrarContext(
         IServiceCollection serviceCollection,
-        IReadOnlyCollection<Type> types,
-        Lazy<ILookup<string, Type>> nameToType,
-        Lazy<IReadOnlyDictionary<string, Type>> fullNameToType,
-        IReadOnlyCollection<IServiceAttributeRegistrar> serviceAttributeRegistrar,
-        IReadOnlyCollection<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars
+        List<Type> types
     )
     {
         ServiceCollection = serviceCollection;
         Types = types;
-        this.nameToType = nameToType;
-        this.fullNameToType = fullNameToType;
-        ServiceAttributeRegistrar = serviceAttributeRegistrar;
-        ServiceTypeImplementationRegistrars = serviceTypeImplementationRegistrars;
+
+        AnalyzeTypes(types);
+    }
+
+    private void AnalyzeTypes(List<Type> types)
+    {
+        foreach (var type in types)
+        {
+            if (type.IsAssignableTo(typeof(IServiceAttributeRegistrar)))
+            {
+                var serviceAttributeRegistrar = Activator.CreateInstance<IServiceAttributeRegistrar>();
+                serviceAttributeRegistrars.Add(serviceAttributeRegistrar);
+            }
+
+            if (type.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)))
+            {
+                var serviceTypeImplementationRegistrar =
+                    Activator.CreateInstance<IServiceTypeImplementationRegistrar>();
+                serviceTypeImplementationRegistrars.Add(serviceTypeImplementationRegistrar);
+            }
+
+            if (nameToType.TryGetValue(type.Name, out var typeNameList))
+            {
+                typeNameList.Add(type);
+            }
+            else
+            {
+                nameToType[type.Name] = new List<Type> { type };
+            }
+
+            if (type.FullName is { } typeFullName)
+            {
+                if (fullNameToType.TryGetValue(typeFullName, out var list))
+                {
+                    list.Add(type);
+                }
+                else
+                {
+                    fullNameToType[typeFullName] = new List<Type> { type };
+                }
+            }
+        }
     }
 
     public IServiceCollection ServiceCollection { get; }
 
-    public IReadOnlyCollection<Type> Types { get; }
+    IReadOnlyCollection<Type> IServiceAttributeRegistrarContext.Types => Types;
 
-    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar { get; }
+    public List<Type> Types { get; }
 
-    public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars { get; }
+    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar =>
+        serviceAttributeRegistrars;
+
+    public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars =>
+        serviceTypeImplementationRegistrars;
 
     public Type? FIndType(string? typeName)
     {
@@ -46,38 +88,40 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
             return null;
         }
 
-        if (fullNameToType.Value.TryGetValue(typeName, out var service))
+        if (fullNameToType.TryGetValue(typeName, out var service) && service.SingleOrDefault() is { } singleService)
         {
-            return service;
+            return singleService;
         }
 
-        var types = nameToType.Value[typeName];
+        var types = nameToType[typeName];
         return types.SingleOrDefault();
     }
 
     public IServiceAttributeRegistrar? FindServiceAttributeRegistrar(Type serviceAttributeType)
     {
-        if (serviceAttributeRegistrarCache.TryGetValue(serviceAttributeType, out var registrar))
+        if (serviceAttributeTypeToRegistrar.TryGetValue(serviceAttributeType, out var registrar))
         {
             return registrar;
         }
 
-        registrar = ServiceAttributeRegistrar
-            .FirstOrDefault(x => x.ServiceAttributeType.IsAssignableFrom(serviceAttributeType));
-        serviceAttributeRegistrarCache[serviceAttributeType] = registrar;
-        return registrar;
+        registrar = ServiceAttributeRegistrar.FirstOrDefault(
+            x => x.ServiceAttributeType.IsAssignableFrom(serviceAttributeType)
+        );
+
+        return serviceAttributeTypeToRegistrar[serviceAttributeType] = registrar;
     }
 
     public IServiceTypeImplementationRegistrar? FindServiceImplementationRegistrar(Type serviceType)
     {
-        if (serviceTypeImplementationRegistrarCache.TryGetValue(serviceType, out var registrar))
+        if (serviceTypeImplementationToRegistrar.TryGetValue(serviceType, out var registrar))
         {
             return registrar;
         }
 
-        registrar = ServiceTypeImplementationRegistrars
-            .FirstOrDefault(x => x.ServiceType.IsAssignableFrom(serviceType));
-        serviceTypeImplementationRegistrarCache[serviceType] = registrar;
-        return registrar;
+        registrar = ServiceTypeImplementationRegistrars.FirstOrDefault(
+            x => x.ServiceType.IsAssignableFrom(serviceType)
+        );
+
+        return serviceTypeImplementationToRegistrar[serviceType] = registrar;
     }
 }
