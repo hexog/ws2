@@ -5,14 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Ws2.Data.Tests;
 
 [Table("table")]
-public class MyRelatedEntity
+public class TestSimpleEntity
 {
 	public Guid Id { get; set; }
+
+	public int Int { get; set; }
 }
 
-public class MyRelatedEntityTypeConfiguration : IEntityTypeConfiguration<MyRelatedEntity>
+public class MyRelatedEntityTypeConfiguration : IEntityTypeConfiguration<TestSimpleEntity>
 {
-	public void Configure(EntityTypeBuilder<MyRelatedEntity> builder)
+	public void Configure(EntityTypeBuilder<TestSimpleEntity> builder)
 	{
 	}
 }
