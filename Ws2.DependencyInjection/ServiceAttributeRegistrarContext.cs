@@ -90,6 +90,13 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
         if (fullNameToType.TryGetValue(typeName, out var services))
         {
+            if (services.Count > 1
+                && ServiceAttributeCollectionPopulationOptions.Global.ThrowOnMultipleTypesWithSameFullName)
+            {
+                AttributeServiceCollectionPopulationException
+                    .ThrowMultipleTypesWithSameFullNameExist(services.First().FullName!);
+            }
+
             if (services.SingleOrDefault() is { } service)
             {
                 return service;
@@ -97,6 +104,11 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
         }
 
         var types = nameToType[typeName];
+        if (types.Count > 1 && ServiceAttributeCollectionPopulationOptions.Global.ThrowOnMultipleTypesWithSameName)
+        {
+            AttributeServiceCollectionPopulationException.ThrowMultipleTypesWithSameNameExist(types.First().Name);
+        }
+
         return types.SingleOrDefault();
     }
 

@@ -49,9 +49,19 @@ public static class ServiceAttributeServiceCollectionExtensions
 
             foreach (var serviceAttribute in serviceAttributes)
             {
+                var serviceAttributeRegistered = false;
                 foreach (var registrar in context.FindServiceAttributeRegistrars(serviceAttribute.GetType()))
                 {
                     registrar.Register(context, type, serviceAttribute);
+                    serviceAttributeRegistered = true;
+                }
+
+                if (!serviceAttributeRegistered
+                    && ServiceAttributeCollectionPopulationOptions.Global.EnsureServiceAttributeHasRegistrar)
+                {
+                    AttributeServiceCollectionPopulationException.ThrowAttributeServiceNotRegistered(
+                        serviceAttribute.GetType()
+                    );
                 }
             }
         }
