@@ -7,8 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceAttributeServiceCollectionExtensions
 {
-    private static IEnumerable<Type> DefaultTypes =>
-        typeof(ServiceAttributeServiceCollectionExtensions).Assembly.DefinedTypes;
+    private static IEnumerable<Type> DefaultTypes => typeof(ServiceAttributeServiceCollectionExtensions).Assembly.DefinedTypes;
 
     public static IServiceCollection AddServicesByAttributesFromTypes(
         this IServiceCollection serviceCollection,

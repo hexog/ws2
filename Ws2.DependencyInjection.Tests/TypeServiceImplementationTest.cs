@@ -10,16 +10,18 @@ public class TypeServiceImplementationTest
     {
         var serviceCollection = new ServiceCollection();
 
-        serviceCollection.AddServicesByAttributesFromTypes(new[]
-        {
-            typeof(IMyInterface),
-            typeof(MyInterfaceImplementation),
-            typeof(MyInterfaceRegistrar),
-            typeof(UnusedType),
-            typeof(MyBaseType),
-            typeof(MyInheritedType),
-            typeof(MyBaseTypeRegistrar)
-        });
+        serviceCollection.AddServicesByAttributesFromTypes(
+            new[]
+            {
+                typeof(IMyInterface),
+                typeof(MyInterfaceImplementation),
+                typeof(MyInterfaceRegistrar),
+                typeof(UnusedType),
+                typeof(MyBaseType),
+                typeof(MyInheritedType),
+                typeof(MyBaseTypeRegistrar)
+            }
+        );
 
         return serviceCollection.BuildServiceProvider();
     }

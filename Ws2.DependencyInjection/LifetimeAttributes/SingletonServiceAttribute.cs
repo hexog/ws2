@@ -19,7 +19,6 @@ public sealed class SingletonServiceAttribute : SingletonServiceBaseAttribute
 
 public sealed class SingletonServiceAttribute<TService> : SingletonServiceBaseAttribute
 {
-
     public SingletonServiceAttribute() : base(typeof(TService))
     {
     }

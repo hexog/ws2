@@ -30,11 +30,13 @@ public class TestStartupTaskRegistration
     {
         var builder = Host.CreateApplicationBuilder();
 
-        builder.Services.AddServicesByAttributesFromTypes(new[]
-        {
-            typeof(StartupTaskImplementationRegistrar),
-            typeof(TestStartupTask)
-        });
+        builder.Services.AddServicesByAttributesFromTypes(
+            new[]
+            {
+                typeof(StartupTaskImplementationRegistrar),
+                typeof(TestStartupTask)
+            }
+        );
 
         var app = builder.Build();
 
@@ -55,5 +57,4 @@ public class TestStartupTaskRegistration
 
         public int Priority => 15;
     }
-
 }

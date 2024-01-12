@@ -7,14 +7,14 @@ namespace Ws2.Data.Tests;
 [Table("table")]
 public class TestSimpleEntity
 {
-	public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-	public int Int { get; set; }
+    public int Int { get; set; }
 }
 
 public class MyRelatedEntityTypeConfiguration : IEntityTypeConfiguration<TestSimpleEntity>
 {
-	public void Configure(EntityTypeBuilder<TestSimpleEntity> builder)
-	{
-	}
+    public void Configure(EntityTypeBuilder<TestSimpleEntity> builder)
+    {
+    }
 }

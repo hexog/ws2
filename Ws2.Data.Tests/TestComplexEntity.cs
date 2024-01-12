@@ -7,23 +7,23 @@ namespace Ws2.Data.Tests;
 
 public class TestComplexEntity
 {
-	[Key]
-	public Guid Id { get; set; }
+    [Key]
+    public Guid Id { get; set; }
 
-	[Required]
-	public string String { get; set; } = null!;
+    [Required]
+    public string String { get; set; } = null!;
 
-	[Column("DateTime2")]
-	public DateTime? DateTime { get; set; }
+    [Column("DateTime2")]
+    public DateTime? DateTime { get; set; }
 
-	public Guid? RelatedEntityId { get; set; }
+    public Guid? RelatedEntityId { get; set; }
 
-	public TestSimpleEntity? SimpleEntity { get; set; } = null!;
+    public TestSimpleEntity? SimpleEntity { get; set; } = null!;
 }
 
 public class MyEntityTypeConfiguration : IEntityTypeConfiguration<TestComplexEntity>
 {
-	public void Configure(EntityTypeBuilder<TestComplexEntity> builder)
-	{
-	}
+    public void Configure(EntityTypeBuilder<TestComplexEntity> builder)
+    {
+    }
 }

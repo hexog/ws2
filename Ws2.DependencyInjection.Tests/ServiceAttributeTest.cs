@@ -22,11 +22,13 @@ public class ServiceAttributeTest
         var (testAssembly, assemblyTypes) = CreateTestAssembly(GoodTypeDescriptions);
         serviceCollection.AddServicesByAttributes(testAssembly);
         typeNameToType = assemblyTypes;
-        serviceProvider = serviceCollection.BuildServiceProvider(new ServiceProviderOptions
-        {
-            ValidateScopes = true,
-            ValidateOnBuild = true
-        });
+        serviceProvider = serviceCollection.BuildServiceProvider(
+            new ServiceProviderOptions
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            }
+        );
     }
 
     [OneTimeTearDown]
@@ -56,10 +58,16 @@ public class ServiceAttributeTest
                 .AddSingletonService("ISingletonMultipleInterfaces1");
 
             yield return new TypeDescription("SingletonWithOwnInstance")
-                .AddSingletonService("ISingletonWithOwnInstanceA", ServiceType.Interface,
-                    SingletonServiceInstanceSharing.OwnInstance)
-                .AddSingletonService("ISingletonWithOwnInstance1", ServiceType.Interface,
-                    SingletonServiceInstanceSharing.OwnInstance);
+                .AddSingletonService(
+                    "ISingletonWithOwnInstanceA",
+                    ServiceType.Interface,
+                    SingletonServiceInstanceSharing.OwnInstance
+                )
+                .AddSingletonService(
+                    "ISingletonWithOwnInstance1",
+                    ServiceType.Interface,
+                    SingletonServiceInstanceSharing.OwnInstance
+                );
 
             yield return new TypeDescription("MixedService")
                 .AddScopedService("ScopedMixedService")
@@ -218,7 +226,8 @@ public class ServiceAttributeTest
                     typeBuilder.SetCustomAttribute(
                         GetServiceAttributeCustomAttributeBuilder(
                             service.ServiceLifetime,
-                            serviceType, service.SingletonInstanceSharing
+                            serviceType,
+                            service.SingletonInstanceSharing
                         )
                     );
                 }
@@ -247,15 +256,19 @@ public class ServiceAttributeTest
             _ => throw new ArgumentOutOfRangeException(nameof(serviceLifetime), serviceLifetime, null)
         };
 
-        static CustomAttributeBuilder CreateCustomAttributeBuilder(Type serviceAttributeType, Type? serviceType,
-            SingletonServiceInstanceSharing? instanceSharing)
+        static CustomAttributeBuilder CreateCustomAttributeBuilder(
+            Type serviceAttributeType,
+            Type? serviceType,
+            SingletonServiceInstanceSharing? instanceSharing
+        )
         {
             if (serviceType is null)
             {
                 var constructorInfo = serviceAttributeType.GetConstructor(Array.Empty<Type>());
                 Debug.Assert(constructorInfo is not null);
                 return new CustomAttributeBuilder(
-                    constructorInfo, Array.Empty<object?>()
+                    constructorInfo,
+                    Array.Empty<object?>()
                 );
             }
             else
@@ -297,8 +310,10 @@ public class ServiceAttributeTest
     )
     {
         public TypeDescription(string typeName)
-            : this(typeName,
-                ImmutableList<(string?, ServiceLifetime, ServiceType?, SingletonServiceInstanceSharing?)>.Empty)
+            : this(
+                typeName,
+                ImmutableList<(string?, ServiceLifetime, ServiceType?, SingletonServiceInstanceSharing?)>.Empty
+            )
         {
         }
 
@@ -307,12 +322,14 @@ public class ServiceAttributeTest
             ServiceLifetime serviceLifetime
         ) : this(
             typeName,
-            ImmutableList.Create((
-                (string?)null,
-                serviceLifetime,
-                (ServiceType?)null,
-                (SingletonServiceInstanceSharing?)null
-            ))
+            ImmutableList.Create(
+                (
+                    (string?)null,
+                    serviceLifetime,
+                    (ServiceType?)null,
+                    (SingletonServiceInstanceSharing?)null
+                )
+            )
         )
         {
         }
@@ -324,12 +341,14 @@ public class ServiceAttributeTest
             ServiceType serviceType = ServiceType.Interface
         ) : this(
             typeName,
-            ImmutableList.Create((
-                (string?)serviceName,
-                serviceLifetime,
-                (ServiceType?)serviceType,
-                (SingletonServiceInstanceSharing?)null
-            ))
+            ImmutableList.Create(
+                (
+                    (string?)serviceName,
+                    serviceLifetime,
+                    (ServiceType?)serviceType,
+                    (SingletonServiceInstanceSharing?)null
+                )
+            )
         )
         {
         }

@@ -9,14 +9,15 @@ internal class SingletonServiceAttributeBuildingContext
 {
     private MethodInfo? getRequiredServiceMethodInfo;
 
-    public MethodInfo GetRequiredServiceMethodInfo =>
-        getRequiredServiceMethodInfo ??= CreateGetRequiredServiceMethodInfo();
+    public MethodInfo GetRequiredServiceMethodInfo => getRequiredServiceMethodInfo ??= CreateGetRequiredServiceMethodInfo();
 
     private static MethodInfo CreateGetRequiredServiceMethodInfo()
     {
         var serviceProviderServiceExtensions = typeof(ServiceProviderServiceExtensions);
-        var getRequiredServiceMethod = serviceProviderServiceExtensions.GetMethod("GetRequiredService",
-            new[] { typeof(IServiceProvider), typeof(Type) });
+        var getRequiredServiceMethod = serviceProviderServiceExtensions.GetMethod(
+            "GetRequiredService",
+            new[] { typeof(IServiceProvider), typeof(Type) }
+        );
         Debug.Assert(getRequiredServiceMethod is not null);
         return getRequiredServiceMethod;
     }
@@ -55,7 +56,8 @@ internal class SingletonServiceAttributeBuildingContext
                     null,
                     GetRequiredServiceMethodInfo,
                     serviceProviderParameterExpression,
-                    Expression.Constant(implementation)),
+                    Expression.Constant(implementation)
+                ),
                 implementation
             ),
             serviceProviderParameterExpression

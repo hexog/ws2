@@ -6,60 +6,60 @@ namespace Ws2.EqualityComparison.Benchmarks;
 [SimpleJob]
 public class ByteArrayGetHashCodeBenchmark
 {
-	[Params(1, 32, 128, 1024)]
-	public int DataLength { get; set; }
+    [Params(1, 32, 128, 1024)]
+    public int DataLength { get; set; }
 
-	private byte[] data = null!;
+    private byte[] data = null!;
 
-	[IterationSetup]
-	public void Setup()
-	{
-		data = new byte[DataLength];
-		Random.Shared.NextBytes(data);
-	}
+    [IterationSetup]
+    public void Setup()
+    {
+        data = new byte[DataLength];
+        Random.Shared.NextBytes(data);
+    }
 
-	[Benchmark(Baseline = true)]
-	public int StandardArrayGetHashCodeBenchmark()
-	{
-		var hashCode = 0;
-		for (var i = 0; i < 5000; i++)
-		{
-			unchecked
-			{
-				hashCode += ByteMemoryHelper.GetLowCollisionHashCode(data);
-			}
-		}
+    [Benchmark(Baseline = true)]
+    public int StandardArrayGetHashCodeBenchmark()
+    {
+        var hashCode = 0;
+        for (var i = 0; i < 5000; i++)
+        {
+            unchecked
+            {
+                hashCode += ByteMemoryHelper.GetLowCollisionHashCode(data);
+            }
+        }
 
-		return hashCode;
-	}
+        return hashCode;
+    }
 
-	[Benchmark]
-	public int FastArrayGetHashCodeBenchmark()
-	{
-		var hashCode = 0;
-		for (var i = 0; i < 5000; i++)
-		{
-			unchecked
-			{
-				hashCode += ByteMemoryHelper.GetStartHashCode(data);
-			}
-		}
+    [Benchmark]
+    public int FastArrayGetHashCodeBenchmark()
+    {
+        var hashCode = 0;
+        for (var i = 0; i < 5000; i++)
+        {
+            unchecked
+            {
+                hashCode += ByteMemoryHelper.GetStartHashCode(data);
+            }
+        }
 
-		return hashCode;
-	}
+        return hashCode;
+    }
 
-	[Benchmark]
-	public int FastReversedArrayGetHashCodeBenchmark()
-	{
-		var hashCode = 0;
-		for (var i = 0; i < 5000; i++)
-		{
-			unchecked
-			{
-				hashCode += ByteMemoryHelper.GetEndHashCode(data);
-			}
-		}
+    [Benchmark]
+    public int FastReversedArrayGetHashCodeBenchmark()
+    {
+        var hashCode = 0;
+        for (var i = 0; i < 5000; i++)
+        {
+            unchecked
+            {
+                hashCode += ByteMemoryHelper.GetEndHashCode(data);
+            }
+        }
 
-		return hashCode;
-	}
+        return hashCode;
+    }
 }

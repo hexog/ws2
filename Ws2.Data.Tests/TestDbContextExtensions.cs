@@ -105,5 +105,4 @@ public class TestDbContextExtensions
         dbContext.Set<TestSimpleEntity>().FirstOrDefault(x => x.Id == simpleEntity.Id)
             .Should().BeNull();
     }
-
 }

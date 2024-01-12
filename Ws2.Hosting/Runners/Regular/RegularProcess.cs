@@ -57,8 +57,11 @@ public abstract class RegularProcess<TOptions> : BackgroundService
             }
             catch (Exception e)
             {
-                Logger.LogError(e, "Unexpected error during execution of regular process {RegularProcess}",
-                    processName);
+                Logger.LogError(
+                    e,
+                    "Unexpected error during execution of regular process {RegularProcess}",
+                    processName
+                );
             }
 
             try
@@ -107,7 +110,7 @@ public abstract class RegularProcess<TOptions> : BackgroundService
             cachedOptions = options;
             if (!options.IsEnabled)
             {
-                pauseTaskSource = new();
+                pauseTaskSource = new TaskCompletionSource();
             }
         }
 

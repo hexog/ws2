@@ -75,8 +75,7 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     public List<Type> Types { get; }
 
-    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar =>
-        serviceAttributeRegistrars;
+    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar => serviceAttributeRegistrars;
 
     public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars =>
         serviceTypeImplementationRegistrars;
@@ -114,7 +113,10 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     IEnumerable<IServiceAttributeRegistrar> IServiceAttributeRegistrarContext.FindServiceAttributeRegistrars(
         Type serviceAttributeType
-    ) => FindServiceAttributeRegistrars(serviceAttributeType);
+    )
+    {
+        return FindServiceAttributeRegistrars(serviceAttributeType);
+    }
 
     public List<IServiceAttributeRegistrar> FindServiceAttributeRegistrars(Type serviceAttributeType)
     {
@@ -131,7 +133,10 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
     }
 
     IEnumerable<IServiceTypeImplementationRegistrar> IServiceAttributeRegistrarContext.
-        FindServiceImplementationRegistrars(Type serviceType) => FindServiceImplementationRegistrars(serviceType);
+        FindServiceImplementationRegistrars(Type serviceType)
+    {
+        return FindServiceImplementationRegistrars(serviceType);
+    }
 
     public List<IServiceTypeImplementationRegistrar> FindServiceImplementationRegistrars(Type serviceType)
     {
