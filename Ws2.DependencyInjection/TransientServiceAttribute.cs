@@ -1,6 +1,6 @@
 using Ws2.DependencyInjection.BaseAttributes;
 
-namespace Ws2.DependencyInjection;
+namespace Ws2.DependencyInjection.LifetimeAttributes;
 
 public sealed class TransientServiceAttribute<TService> : TransientServiceBaseAttribute
 {

@@ -17,6 +17,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Hosting.Tests", "Ws2.Ho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection.Abstractions", "Ws2.DependencyInjection.Abstractions\Ws2.DependencyInjection.Abstractions.csproj", "{E266867C-75EB-4B77-9CBE-B0A2062DB563}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison", "Ws2.EqualityComparison\Ws2.EqualityComparison.csproj", "{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison.Benchmarks", "Ws2.EqualityComparison.Benchmarks\Ws2.EqualityComparison.Benchmarks.csproj", "{A518CE39-EB85-4656-9828-F1E641C4A1E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison.Tests", "Ws2.EqualityComparison.Tests\Ws2.EqualityComparison.Tests.csproj", "{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.Tests", "Ws2.Async.Tests\Ws2.Async.Tests.csproj", "{DFD05448-C08A-4B43-8CF9-6E054851B610}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async", "Ws2.Async\Ws2.Async.csproj", "{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +64,25 @@ Global
 		{E266867C-75EB-4B77-9CBE-B0A2062DB563}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E266867C-75EB-4B77-9CBE-B0A2062DB563}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E266867C-75EB-4B77-9CBE-B0A2062DB563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A518CE39-EB85-4656-9828-F1E641C4A1E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A518CE39-EB85-4656-9828-F1E641C4A1E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A518CE39-EB85-4656-9828-F1E641C4A1E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A518CE39-EB85-4656-9828-F1E641C4A1E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD05448-C08A-4B43-8CF9-6E054851B610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD05448-C08A-4B43-8CF9-6E054851B610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD05448-C08A-4B43-8CF9-6E054851B610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD05448-C08A-4B43-8CF9-6E054851B610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
