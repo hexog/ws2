@@ -43,6 +43,6 @@ public static class ByteMemoryHelper
 
     public static bool SequenceEquals(byte[]? x, byte[]? y)
     {
-        return ReferenceEquals(x, y) || (x is not null && y is not null && SequenceEquals(x, y));
+        return ReferenceEquals(x, y) || (x is not null && y is not null && SequenceEquals(x.AsSpan(), y.AsSpan()));
     }
 }
