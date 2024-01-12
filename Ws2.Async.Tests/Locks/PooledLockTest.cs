@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Ws2.Async.Locks;
+using Ws2.Async.Locks.PooledLocks;
 using Ws2.EqualityComparison;
 
 namespace Ws2.Async.Tests.Locks;

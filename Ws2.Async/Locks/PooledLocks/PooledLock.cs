@@ -1,4 +1,4 @@
-namespace Ws2.Async.Locks;
+namespace Ws2.Async.Locks.PooledLocks;
 
 public class PooledLock : ILock
 {

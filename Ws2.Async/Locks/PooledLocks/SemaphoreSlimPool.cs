@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Ws2.Async.Locks;
+namespace Ws2.Async.Locks.PooledLocks;
 
 public class SemaphoreSlimPool : ISemaphorePool, IDisposable
 {
