@@ -1,6 +1,6 @@
 namespace Ws2.Hosting.StartupTasks;
 
-public class StartupTaskExecutor
+public static class StartupTaskExecutor
 {
     public static async Task ExecuteStartupTasksAsync(IEnumerable<IStartupTask> tasks, CancellationToken cancellationToken = default)
     {
