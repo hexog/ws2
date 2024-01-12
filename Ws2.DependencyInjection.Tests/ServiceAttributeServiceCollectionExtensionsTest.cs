@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Ws2.DependencyInjection.LifetimeAttributes;
 
 namespace Ws2.DependencyInjection.Tests;
 
