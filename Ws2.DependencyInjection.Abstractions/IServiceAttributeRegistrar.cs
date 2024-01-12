@@ -8,7 +8,7 @@ public interface IServiceAttributeRegistrar
 }
 
 public interface IServiceAttributeRegistrar<in TServiceAttribute> : IServiceAttributeRegistrar
-    where TServiceAttribute : ServiceAttribute
+    where TServiceAttribute : Attribute
 {
     Type IServiceAttributeRegistrar.ServiceAttributeType => typeof(TServiceAttribute);
 

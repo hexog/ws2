@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ws2.DependencyInjection.Abstractions;
+using Ws2.DependencyInjection.LifetimeAttributes.Abstract;
 
 namespace Ws2.DependencyInjection.Registrars;
 

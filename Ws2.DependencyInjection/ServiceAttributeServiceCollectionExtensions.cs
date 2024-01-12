@@ -52,28 +52,11 @@ public static class ServiceAttributeServiceCollectionExtensions
                 }
             }
 
-            var serviceAttributes = type.GetCustomAttributes<ServiceAttribute>().ToList();
-
-            if (serviceAttributes.Count == 0)
+            foreach (var serviceAttribute in type.GetCustomAttributes())
             {
-                continue;
-            }
-
-            foreach (var serviceAttribute in serviceAttributes)
-            {
-                var serviceAttributeRegistered = false;
                 foreach (var registrar in context.FindServiceAttributeRegistrars(serviceAttribute.GetType()))
                 {
                     registrar.Register(context, type, serviceAttribute);
-                    serviceAttributeRegistered = true;
-                }
-
-                if (!serviceAttributeRegistered
-                    && ServiceAttributeCollectionPopulationOptions.Global.EnsureServiceAttributeHasRegistrar)
-                {
-                    AttributeServiceCollectionPopulationException.ThrowAttributeServiceNotRegistered(
-                        serviceAttribute.GetType()
-                    );
                 }
             }
         }

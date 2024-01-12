@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Ws2.DependencyInjection.Abstractions;
 
-namespace Ws2.DependencyInjection.BaseAttributes;
+namespace Ws2.DependencyInjection.LifetimeAttributes.Abstract;
 
 public abstract class ScopedServiceBaseAttribute : ServiceAttribute
 {

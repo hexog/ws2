@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Ws2.DependencyInjection.BaseAttributes;
+using Ws2.DependencyInjection.LifetimeAttributes.Abstract;
 
 namespace Ws2.DependencyInjection.LifetimeAttributes;
 

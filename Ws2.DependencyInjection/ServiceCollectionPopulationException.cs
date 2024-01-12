@@ -16,11 +16,4 @@ public class AttributeServiceCollectionPopulationException : Exception
     {
         throw new AttributeServiceCollectionPopulationException($"Multiple types with same name exist: {typeName}");
     }
-
-    public static void ThrowAttributeServiceNotRegistered(Type attributeServiceType)
-    {
-        throw new AttributeServiceCollectionPopulationException(
-            $"Type with attribute service {attributeServiceType.Name} could not be registered"
-        );
-    }
 }

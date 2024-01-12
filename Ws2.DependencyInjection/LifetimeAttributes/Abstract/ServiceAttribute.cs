@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ws2.DependencyInjection.Abstractions;
+namespace Ws2.DependencyInjection.LifetimeAttributes.Abstract;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
 public abstract class ServiceAttribute : Attribute
