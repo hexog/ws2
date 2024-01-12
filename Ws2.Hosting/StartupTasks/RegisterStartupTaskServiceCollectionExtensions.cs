@@ -35,11 +35,4 @@ public static class RegisterStartupTaskServiceCollectionExtensions
         serviceCollection.TryAddEnumerable(ServiceDescriptor.Transient<IStartupTask, TStartupTask>(factory));
         return serviceCollection;
     }
-
-    public static IServiceCollection AddStartupTasksFromAssembly(this IServiceCollection serviceCollection)
-    {
-        serviceCollection
-            .TryAddTransient<IServiceTypeImplementationRegistrar<IStartupTask>, StartupTaskImplementationRegistrar>();
-        return serviceCollection;
-    }
 }

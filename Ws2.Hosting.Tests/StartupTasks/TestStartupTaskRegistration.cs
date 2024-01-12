@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Ws2.DependencyInjection.Abstractions;
 using Ws2.Hosting.StartupTasks;
 
 namespace Ws2.Hosting.Tests.StartupTasks;
@@ -33,9 +34,10 @@ public class TestStartupTaskRegistration
         builder.Services.AddServicesByAttributesFromTypes(
             new[]
             {
-                typeof(StartupTaskImplementationRegistrar),
                 typeof(TestStartupTask)
-            }
+            },
+            Array.Empty<IServiceAttributeRegistrar>(),
+            new[] { new StartupTaskImplementationRegistrar() }
         );
 
         var app = builder.Build();

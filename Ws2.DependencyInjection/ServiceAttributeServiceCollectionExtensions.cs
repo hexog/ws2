@@ -1,24 +1,37 @@
 ﻿using System.Reflection;
 using Ws2.DependencyInjection;
 using Ws2.DependencyInjection.Abstractions;
+using Ws2.DependencyInjection.Registrars;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceAttributeServiceCollectionExtensions
 {
-    private static IEnumerable<Type> DefaultTypes => typeof(ServiceAttributeServiceCollectionExtensions).Assembly.DefinedTypes;
+    public static readonly IServiceAttributeRegistrar[] DefaultAttributeRegistrars =
+    {
+        new SingletonServiceAttributeRegistrar(),
+        new ScopedServiceAttributeRegistrar(),
+        new TransientServiceAttributeRegistrar()
+    };
 
     public static IServiceCollection AddServicesByAttributesFromTypes(
         this IServiceCollection serviceCollection,
-        IEnumerable<Type> types
+        IEnumerable<Type> types,
+        IReadOnlyCollection<IServiceAttributeRegistrar> attributeRegistrars,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> implementationRegistrars
     )
     {
         var typeList = types
             .Concat(serviceCollection.Where(x => x.ImplementationType is not null).Select(x => x.ImplementationType!))
             .Distinct()
             .ToList();
-        var context = new ServiceAttributeRegistrarContext(serviceCollection, typeList);
+        var context = new ServiceAttributeRegistrarContext(
+            serviceCollection,
+            typeList,
+            attributeRegistrars,
+            implementationRegistrars
+        );
 
         foreach (var type in context.Types)
         {
@@ -73,8 +86,23 @@ public static class ServiceAttributeServiceCollectionExtensions
         params Assembly[] assembliesToAdd
     )
     {
-        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes).Concat(DefaultTypes);
-        return serviceCollection.AddServicesByAttributesFromTypes(types);
+        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        return serviceCollection.AddServicesByAttributesFromTypes(
+            types,
+            DefaultAttributeRegistrars,
+            Array.Empty<IServiceTypeImplementationRegistrar>()
+        );
+    }
+
+    public static IServiceCollection AddServicesByAttributes(
+        this IServiceCollection serviceCollection,
+        IEnumerable<Assembly> assembliesToAdd,
+        IReadOnlyCollection<IServiceAttributeRegistrar> attributeRegistrars,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> implementationRegistrars
+    )
+    {
+        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        return serviceCollection.AddServicesByAttributesFromTypes(types, attributeRegistrars, implementationRegistrars);
     }
 
     public static IServiceCollection AddServicesByAttributes(
@@ -82,21 +110,39 @@ public static class ServiceAttributeServiceCollectionExtensions
         Assembly assembly
     )
     {
-        return serviceCollection.AddServicesByAttributesFromTypes(assembly.DefinedTypes.Concat(DefaultTypes));
+        return serviceCollection.AddServicesByAttributesFromTypes(
+            assembly.DefinedTypes,
+            DefaultAttributeRegistrars,
+            Array.Empty<IServiceTypeImplementationRegistrar>()
+        );
     }
 
     public static IServiceCollection AddServicesByAttributes(
         this IServiceCollection serviceCollection,
-        IEnumerable<Assembly> assembliesToAdd,
-        bool excludeDefaultRegistrars = false
+        Assembly assembly,
+        IEnumerable<IServiceAttributeRegistrar> attributeRegistrars,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> implementationRegistrars
     )
     {
-        IEnumerable<Type> types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
-        if (!excludeDefaultRegistrars)
-        {
-            types = types.Concat(DefaultTypes);
-        }
+        return serviceCollection.AddServicesByAttributesFromTypes(
+            assembly.DefinedTypes,
+            attributeRegistrars.Concat(DefaultAttributeRegistrars).ToList(),
+            implementationRegistrars
+        );
+    }
 
-        return serviceCollection.AddServicesByAttributesFromTypes(types);
+    public static IServiceCollection AddServicesByAttributesWithoutDefaultRegistrars(
+        this IServiceCollection serviceCollection,
+        IEnumerable<Assembly> assembliesToAdd,
+        IEnumerable<IServiceAttributeRegistrar> attributeRegistrars,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> implementationRegistrars
+    )
+    {
+        var types = assembliesToAdd.SelectMany(x => x.DefinedTypes);
+        return serviceCollection.AddServicesByAttributesFromTypes(
+            types,
+            attributeRegistrars.Concat(DefaultAttributeRegistrars).ToList(),
+            implementationRegistrars
+        );
     }
 }

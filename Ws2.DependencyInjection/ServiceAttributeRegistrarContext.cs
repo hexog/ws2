@@ -9,10 +9,6 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     private readonly Dictionary<string, List<Type>> fullNameToType = new();
 
-    private readonly List<IServiceAttributeRegistrar> serviceAttributeRegistrars = new();
-
-    private readonly List<IServiceTypeImplementationRegistrar> serviceTypeImplementationRegistrars = new();
-
     private readonly Dictionary<Type, List<IServiceAttributeRegistrar>> serviceAttributeTypeToRegistrar = new();
 
     private readonly Dictionary<Type, List<IServiceTypeImplementationRegistrar>> serviceTypeImplementationToRegistrar =
@@ -20,11 +16,16 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     public ServiceAttributeRegistrarContext(
         IServiceCollection serviceCollection,
-        List<Type> types
+        List<Type> types,
+        IReadOnlyCollection<IServiceAttributeRegistrar> attributeRegistrars,
+        IReadOnlyCollection<IServiceTypeImplementationRegistrar> implementationRegistrars
     )
     {
         ServiceCollection = serviceCollection;
         Types = types;
+
+        ServiceAttributeRegistrar = attributeRegistrars;
+        ServiceTypeImplementationRegistrars = implementationRegistrars;
 
         AnalyzeTypes(types);
     }
@@ -33,19 +34,6 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
     {
         foreach (var type in types)
         {
-            if (type.IsAssignableTo(typeof(IServiceAttributeRegistrar)) && !type.IsAbstract)
-            {
-                var serviceAttributeRegistrar = (IServiceAttributeRegistrar)Activator.CreateInstance(type)!;
-                serviceAttributeRegistrars.Add(serviceAttributeRegistrar);
-            }
-
-            if (type.IsAssignableTo(typeof(IServiceTypeImplementationRegistrar)) && !type.IsAbstract)
-            {
-                var serviceTypeImplementationRegistrar =
-                    (IServiceTypeImplementationRegistrar)Activator.CreateInstance(type)!;
-                serviceTypeImplementationRegistrars.Add(serviceTypeImplementationRegistrar);
-            }
-
             if (nameToType.TryGetValue(type.Name, out var typeNameList))
             {
                 typeNameList.Add(type);
@@ -75,10 +63,9 @@ public class ServiceAttributeRegistrarContext : IServiceAttributeRegistrarContex
 
     public List<Type> Types { get; }
 
-    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar => serviceAttributeRegistrars;
+    public IReadOnlyCollection<IServiceAttributeRegistrar> ServiceAttributeRegistrar { get; }
 
-    public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars =>
-        serviceTypeImplementationRegistrars;
+    public IReadOnlyCollection<IServiceTypeImplementationRegistrar> ServiceTypeImplementationRegistrars { get; }
 
     public Type? FIndType(string? typeName)
     {

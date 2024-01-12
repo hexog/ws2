@@ -15,12 +15,12 @@ public class TypeServiceImplementationTest
             {
                 typeof(IMyInterface),
                 typeof(MyInterfaceImplementation),
-                typeof(MyInterfaceRegistrar),
                 typeof(UnusedType),
                 typeof(MyBaseType),
-                typeof(MyInheritedType),
-                typeof(MyBaseTypeRegistrar)
-            }
+                typeof(MyInheritedType)
+            },
+            Array.Empty<IServiceAttributeRegistrar>(),
+            new IServiceTypeImplementationRegistrar[] { new MyBaseTypeRegistrar(), new MyInterfaceRegistrar() }
         );
 
         return serviceCollection.BuildServiceProvider();
