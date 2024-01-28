@@ -8,7 +8,7 @@ Automated dependency injection through attributes.
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddServicesByAttributes(typeof(Program).Assembly);
+builder.Services.AddServicesFromAssembly(typeof(Program).Assembly);
 ```
 
 > MyService.cs
