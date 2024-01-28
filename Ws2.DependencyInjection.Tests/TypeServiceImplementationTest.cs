@@ -10,7 +10,7 @@ public class TypeServiceImplementationTest
     {
         var serviceCollection = new ServiceCollection();
 
-        serviceCollection.AddServicesByAttributesFromTypes(
+        serviceCollection.AddServicesFromTypes(
             new[]
             {
                 typeof(IMyInterface),

@@ -31,7 +31,7 @@ public class TestStartupTaskRegistration
     {
         var builder = Host.CreateApplicationBuilder();
 
-        builder.Services.AddServicesByAttributesFromTypes(
+        builder.Services.AddServicesFromTypes(
             new[]
             {
                 typeof(TestStartupTask)

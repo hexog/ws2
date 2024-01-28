@@ -15,18 +15,18 @@ public class SingletonServiceAttributeRegistrar : IServiceRegistrar
 
         foreach (var serviceAttribute in serviceAttributes)
         {
-            var serviceType = serviceAttribute.Service ?? context.FindType(serviceAttribute.ServiceTypeName);
-            if (serviceType is null)
-            {
-                continue;
-            }
-
             var serviceKey = serviceAttribute.ServiceKey;
             if (serviceKey is not null)
             {
                 context.ServiceCollection.TryAdd(
                     new ServiceDescriptor(implementationType, serviceKey, implementationType, ServiceLifetime.Singleton)
                 );
+            }
+
+            var serviceType = serviceAttribute.Service ?? context.FindType(serviceAttribute.ServiceTypeName);
+            if (serviceType is null)
+            {
+                continue;
             }
 
             if (serviceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
