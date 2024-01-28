@@ -20,7 +20,7 @@ public class ServiceAttributeTest
     {
         serviceCollection = new ServiceCollection();
         var (testAssembly, assemblyTypes) = CreateTestAssembly(GoodTypeDescriptions);
-        serviceCollection.AddServicesByAttributes(testAssembly);
+        serviceCollection.AddServicesFromAssembly(testAssembly);
         typeNameToType = assemblyTypes;
         serviceProvider = serviceCollection.BuildServiceProvider(
             new ServiceProviderOptions

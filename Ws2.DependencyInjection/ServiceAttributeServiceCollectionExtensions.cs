@@ -64,7 +64,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddServicesByAttributes(
+    public static IServiceCollection AddServicesFromAssembly(
         this IServiceCollection serviceCollection,
         params Assembly[] assembliesToAdd
     )
@@ -77,7 +77,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         );
     }
 
-    public static IServiceCollection AddServicesByAttributes(
+    public static IServiceCollection AddServicesFromAssembly(
         this IServiceCollection serviceCollection,
         IEnumerable<Assembly> assembliesToAdd,
         IReadOnlyCollection<IServiceAttributeRegistrar> attributeRegistrars,
@@ -88,7 +88,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         return serviceCollection.AddServicesByAttributesFromTypes(types, attributeRegistrars, implementationRegistrars);
     }
 
-    public static IServiceCollection AddServicesByAttributes(
+    public static IServiceCollection AddServicesFromAssembly(
         this IServiceCollection serviceCollection,
         Assembly assembly
     )
@@ -100,7 +100,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         );
     }
 
-    public static IServiceCollection AddServicesByAttributes(
+    public static IServiceCollection AddServicesFromAssembly(
         this IServiceCollection serviceCollection,
         Assembly assembly,
         IEnumerable<IServiceAttributeRegistrar> attributeRegistrars,
@@ -114,7 +114,7 @@ public static class ServiceAttributeServiceCollectionExtensions
         );
     }
 
-    public static IServiceCollection AddServicesByAttributesWithoutDefaultRegistrars(
+    public static IServiceCollection AddServicesFromAssemblyWithoutDefaultRegistrars(
         this IServiceCollection serviceCollection,
         IEnumerable<Assembly> assembliesToAdd,
         IEnumerable<IServiceAttributeRegistrar> attributeRegistrars,

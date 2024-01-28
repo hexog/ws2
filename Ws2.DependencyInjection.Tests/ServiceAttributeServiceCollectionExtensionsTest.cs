@@ -12,7 +12,7 @@ public class ServiceAttributeServiceCollectionExtensionsTest
     public void Setup()
     {
         var hostBuilder = Host.CreateApplicationBuilder();
-        hostBuilder.Services.AddServicesByAttributes(typeof(ServiceAttributeServiceCollectionExtensionsTest).Assembly);
+        hostBuilder.Services.AddServicesFromAssembly(typeof(ServiceAttributeServiceCollectionExtensionsTest).Assembly);
 
         var app = hostBuilder.Build();
         serviceProvider = app.Services;
