@@ -6,11 +6,18 @@ public static class StartupTaskExecutor
     {
         foreach (var taskBatch in tasks.GroupBy(x => x.Priority).OrderBy(x => x.Key).Select(x => x))
         {
-            await Parallel.ForEachAsync(
-                taskBatch,
-                cancellationToken,
-                (task, token) => task.ExecuteAsync(token)
-            ).ConfigureAwait(false);
+            if (taskBatch.Count() == 1)
+            {
+                await taskBatch.First().ExecuteAsync(cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await Parallel.ForEachAsync(
+                    taskBatch,
+                    cancellationToken,
+                    static (task, token) => task.ExecuteAsync(token)
+                ).ConfigureAwait(false);
+            }
         }
     }
 }
