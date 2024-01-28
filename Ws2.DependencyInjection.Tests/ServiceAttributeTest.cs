@@ -70,9 +70,24 @@ public class ServiceAttributeTest
                 );
 
             yield return new TypeDescription("MixedService")
-                .AddScopedService("ScopedMixedService")
-                .AddTransientService("TransientMixedService")
-                .AddSingletonService("SingletonMixedService");
+                .AddScopedService("IScopedMixedService")
+                .AddTransientService("ITransientMixedService")
+                .AddSingletonService("ISingletonMixedService");
+
+            yield return new TypeDescription("KeyedScoped", "Key1", ServiceLifetime.Scoped);
+            yield return new TypeDescription("KeyedScoped2", "Key1", ServiceLifetime.Scoped);
+
+            yield return new TypeDescription("KeyedService_3")
+                .AddScopedService("IKeyedService", "Key3")
+                .AddScopedService("IKeyedService", "Key4");
+
+            yield return new TypeDescription("KeyedSingleton_5")
+                .AddSingletonService("IKeyedSingleton", "Key5")
+                .AddSingletonService("IKeyedSingleton2", "Key5")
+                .AddSingletonService("IKeyedSingleton3", "Key5", instanceSharing: SingletonServiceInstanceSharing.OwnInstance)
+                .AddSingletonService("IKeyedSingleton4", "Key5", instanceSharing: SingletonServiceInstanceSharing.KeyedInstance)
+                .AddSingletonService("IKeyedSingleton5", "Key5", instanceSharing: SingletonServiceInstanceSharing.KeyedInstance)
+                .AddSingletonService("IKeyedSingleton6", "Key6");
         }
     }
 
@@ -151,18 +166,64 @@ public class ServiceAttributeTest
     public void TestRegisterMixedServicesType()
     {
         using var serviceScope = serviceProvider.CreateScope();
-        var scoped = serviceScope.ServiceProvider.GetService(typeNameToType["ScopedMixedService"]);
+        var scoped = serviceScope.ServiceProvider.GetService(typeNameToType["IScopedMixedService"]);
         scoped.Should().NotBeNull();
 
-        var transient = serviceScope.ServiceProvider.GetService(typeNameToType["TransientMixedService"]);
+        var transient = serviceScope.ServiceProvider.GetService(typeNameToType["ITransientMixedService"]);
         transient.Should().NotBeNull();
         transient.Should().BeOfType(scoped!.GetType());
         ReferenceEquals(scoped, transient).Should().BeFalse();
 
-        var singleton = serviceScope.ServiceProvider.GetService(typeNameToType["SingletonMixedService"]);
+        var singleton = serviceScope.ServiceProvider.GetService(typeNameToType["ISingletonMixedService"]);
         singleton.Should().NotBeNull();
-        singleton.Should().BeOfType(scoped!.GetType());
+        singleton.Should().BeOfType(scoped.GetType());
         ReferenceEquals(scoped, singleton).Should().BeFalse();
+    }
+
+    [Test]
+    public void TestRegisterKeyedServices()
+    {
+        using var serviceScope = serviceProvider.CreateScope();
+
+        var keyedScoped = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["KeyedScoped"], "Key1");
+        var keyedScoped2 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["KeyedScoped2"], "Key1");
+
+        keyedScoped.Should().NotBeNull();
+        keyedScoped2.Should().NotBeNull();
+
+        var keyedService = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedService"], "Key3");
+        var keyedService2 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedService"], "Key4");
+
+        keyedService.Should().NotBeNull();
+        keyedService2.Should().NotBeNull();
+        ReferenceEquals(keyedService, keyedService2).Should().BeFalse();
+    }
+
+    [Test]
+    public void TestRegisterKeyedSingletonServices()
+    {
+        using var serviceScope = serviceProvider.CreateScope();
+
+        var s1 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton"], "Key5");
+        var s2 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton2"], "Key5");
+        var s3 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton3"], "Key5");
+        var s4 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton4"], "Key5");
+        var s5 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton5"], "Key5");
+        var s6 = serviceScope.ServiceProvider.GetRequiredKeyedService(typeNameToType["IKeyedSingleton6"], "Key6");
+
+        ReferenceEquals(s1, s2).Should().BeTrue();
+        ReferenceEquals(s1, s3).Should().BeFalse();
+        ReferenceEquals(s1, s4).Should().BeFalse();
+        ReferenceEquals(s1, s5).Should().BeFalse();
+        ReferenceEquals(s1, s6).Should().BeTrue();
+
+        ReferenceEquals(s3, s4).Should().BeFalse();
+        ReferenceEquals(s3, s5).Should().BeFalse();
+        ReferenceEquals(s3, s6).Should().BeFalse();
+
+        ReferenceEquals(s4, s5).Should().BeTrue();
+        ReferenceEquals(s4, s6).Should().BeFalse();
+
     }
 
     #region Test assembly creation
@@ -191,7 +252,7 @@ public class ServiceAttributeTest
                 if (service.ServiceName is null)
                 {
                     typeBuilder.SetCustomAttribute(
-                        GetServiceAttributeCustomAttributeBuilder(service.ServiceLifetime, null, null)
+                        GetServiceAttributeCustomAttributeBuilder(service.ServiceLifetime, null, service.ServiceKey, null)
                     );
                 }
                 else
@@ -208,25 +269,30 @@ public class ServiceAttributeTest
                         _ => throw new ArgumentOutOfRangeException()
                     };
 
-                    var serviceType = moduleBuilder
-                        .DefineType(service.ServiceName, serviceTypeAttributes | DefaultTypeAttributes)
-                        .CreateType();
-
-                    switch (service.ServiceType)
+                    if (!assemblyTypes.TryGetValue(service.ServiceName, out var serviceType))
                     {
-                        case ServiceType.Interface:
-                            typeBuilder.AddInterfaceImplementation(serviceType);
-                            break;
-                        case ServiceType.AbstractClass or ServiceType.Class:
-                            typeBuilder.SetParent(serviceType);
-                            break;
+                        serviceType = moduleBuilder
+                            .DefineType(service.ServiceName, serviceTypeAttributes | DefaultTypeAttributes)
+                            .CreateType();
+
+                        switch (service.ServiceType)
+                        {
+                            case ServiceType.Interface:
+                                typeBuilder.AddInterfaceImplementation(serviceType);
+                                break;
+                            case ServiceType.AbstractClass or ServiceType.Class:
+                                typeBuilder.SetParent(serviceType);
+                                break;
+                        }
+
+                        assemblyTypes[service.ServiceName] = serviceType;
                     }
 
-                    assemblyTypes[service.ServiceName] = serviceType;
                     typeBuilder.SetCustomAttribute(
                         GetServiceAttributeCustomAttributeBuilder(
                             service.ServiceLifetime,
                             serviceType,
+                            service.ServiceKey,
                             service.SingletonInstanceSharing
                         )
                     );
@@ -242,23 +308,25 @@ public class ServiceAttributeTest
     private static CustomAttributeBuilder GetServiceAttributeCustomAttributeBuilder(
         ServiceLifetime serviceLifetime,
         Type? serviceType,
+        object? serviceKey,
         SingletonServiceInstanceSharing? instanceSharing
     )
     {
         return serviceLifetime switch
         {
             ServiceLifetime.Singleton =>
-                CreateCustomAttributeBuilder(typeof(SingletonServiceAttribute), serviceType, instanceSharing),
+                CreateCustomAttributeBuilder(typeof(SingletonServiceAttribute), serviceType, serviceKey, instanceSharing),
             ServiceLifetime.Scoped =>
-                CreateCustomAttributeBuilder(typeof(ScopedServiceAttribute), serviceType, instanceSharing),
+                CreateCustomAttributeBuilder(typeof(ScopedServiceAttribute), serviceType, serviceKey, instanceSharing),
             ServiceLifetime.Transient =>
-                CreateCustomAttributeBuilder(typeof(TransientServiceAttribute), serviceType, instanceSharing),
+                CreateCustomAttributeBuilder(typeof(TransientServiceAttribute), serviceType, serviceKey, instanceSharing),
             _ => throw new ArgumentOutOfRangeException(nameof(serviceLifetime), serviceLifetime, null)
         };
 
         static CustomAttributeBuilder CreateCustomAttributeBuilder(
             Type serviceAttributeType,
             Type? serviceType,
+            object? serviceKey,
             SingletonServiceInstanceSharing? instanceSharing
         )
         {
@@ -268,7 +336,9 @@ public class ServiceAttributeTest
                 Debug.Assert(constructorInfo is not null);
                 return new CustomAttributeBuilder(
                     constructorInfo,
-                    Array.Empty<object?>()
+                    Array.Empty<object?>(),
+                    new[] { serviceAttributeType.GetProperty("ServiceKey")! },
+                    new[] { serviceKey }
                 );
             }
             else
@@ -278,19 +348,23 @@ public class ServiceAttributeTest
 
                 if (typeof(SingletonServiceAttribute).IsAssignableFrom(serviceAttributeType))
                 {
-                    var propertyInfo = serviceAttributeType.GetProperty("InstanceSharing");
-                    Debug.Assert(propertyInfo is not null);
+                    var instanceSharingProperty = serviceAttributeType.GetProperty("InstanceSharing");
+                    var serviceKeyProperty = serviceAttributeType.GetProperty("ServiceKey");
+                    Debug.Assert(instanceSharingProperty is not null);
+                    Debug.Assert(serviceKeyProperty is not null);
                     return new CustomAttributeBuilder(
                         constructorInfo,
                         new object?[] { serviceType.FullName },
-                        new[] { propertyInfo },
-                        new object?[] { instanceSharing }
+                        new[] { instanceSharingProperty, serviceKeyProperty },
+                        new[] { instanceSharing, serviceKey }
                     );
                 }
 
                 return new CustomAttributeBuilder(
                     constructorInfo,
-                    new object?[] { serviceType.FullName }
+                    new object?[] { serviceType.FullName },
+                    new[] { serviceAttributeType.GetProperty("ServiceKey")! },
+                    new[] { serviceKey }
                 );
             }
         }
@@ -305,14 +379,14 @@ public class ServiceAttributeTest
 
     public readonly record struct TypeDescription(
         string TypeName,
-        IImmutableList<(string? ServiceName, ServiceLifetime ServiceLifetime, ServiceType? ServiceType,
+        IImmutableList<(string? ServiceName, object? ServiceKey, ServiceLifetime ServiceLifetime, ServiceType? ServiceType,
             SingletonServiceInstanceSharing? SingletonInstanceSharing)> Services
     )
     {
         public TypeDescription(string typeName)
             : this(
                 typeName,
-                ImmutableList<(string?, ServiceLifetime, ServiceType?, SingletonServiceInstanceSharing?)>.Empty
+                ImmutableList<(string?, object?, ServiceLifetime, ServiceType?, SingletonServiceInstanceSharing?)>.Empty
             )
         {
         }
@@ -325,6 +399,26 @@ public class ServiceAttributeTest
             ImmutableList.Create(
                 (
                     (string?)null,
+                    (object?)null,
+                    serviceLifetime,
+                    (ServiceType?)null,
+                    (SingletonServiceInstanceSharing?)null
+                )
+            )
+        )
+        {
+        }
+
+        public TypeDescription(
+            string typeName,
+            object serviceName,
+            ServiceLifetime serviceLifetime
+        ) : this(
+            typeName,
+            ImmutableList.Create(
+                (
+                    (string?)null,
+                    (object?)serviceName,
                     serviceLifetime,
                     (ServiceType?)null,
                     (SingletonServiceInstanceSharing?)null
@@ -344,6 +438,7 @@ public class ServiceAttributeTest
             ImmutableList.Create(
                 (
                     (string?)serviceName,
+                    (object?)null,
                     serviceLifetime,
                     (ServiceType?)serviceType,
                     (SingletonServiceInstanceSharing?)null
@@ -353,26 +448,26 @@ public class ServiceAttributeTest
         {
         }
 
-        public TypeDescription AddService(ServiceLifetime serviceLifetime)
+        public TypeDescription(
+            string typeName,
+            object serviceKey,
+            ServiceLifetime serviceLifetime,
+            string serviceName,
+            ServiceType serviceType = ServiceType.Interface
+        ) : this(
+            typeName,
+            ImmutableList.Create(
+                (
+                    (string?)serviceName,
+                    (object?)serviceKey,
+                    serviceLifetime,
+                    (ServiceType?)serviceType,
+                    (SingletonServiceInstanceSharing?)null
+                )
+            )
+        )
         {
-            return this with { Services = Services.Add((null, serviceLifetime, null, null)) };
         }
-
-        public TypeDescription AddScopedService()
-        {
-            return this with { Services = Services.Add((null, ServiceLifetime.Scoped, null, null)) };
-        }
-
-        public TypeDescription AddSingletonService()
-        {
-            return this with { Services = Services.Add((null, ServiceLifetime.Singleton, null, null)) };
-        }
-
-        public TypeDescription AddTransientService()
-        {
-            return this with { Services = Services.Add((null, ServiceLifetime.Transient, null, null)) };
-        }
-
 
         public TypeDescription AddService(
             string serviceName,
@@ -380,7 +475,7 @@ public class ServiceAttributeTest
             ServiceType type = ServiceType.Interface
         )
         {
-            return this with { Services = Services.Add((serviceName, serviceLifetime, type, null)) };
+            return this with { Services = Services.Add((serviceName, null, serviceLifetime, type, null)) };
         }
 
         public TypeDescription AddScopedService(
@@ -388,7 +483,7 @@ public class ServiceAttributeTest
             ServiceType type = ServiceType.Interface
         )
         {
-            return this with { Services = Services.Add((serviceName, ServiceLifetime.Scoped, type, null)) };
+            return this with { Services = Services.Add((serviceName, null, ServiceLifetime.Scoped, type, null)) };
         }
 
         public TypeDescription AddSingletonService(
@@ -399,7 +494,7 @@ public class ServiceAttributeTest
         {
             return this with
             {
-                Services = Services.Add((serviceName, ServiceLifetime.Singleton, type, instanceSharing))
+                Services = Services.Add((serviceName, null, ServiceLifetime.Singleton, type, instanceSharing))
             };
         }
 
@@ -408,8 +503,50 @@ public class ServiceAttributeTest
             ServiceType type = ServiceType.Interface
         )
         {
-            return this with { Services = Services.Add((serviceName, ServiceLifetime.Transient, type, null)) };
+            return this with { Services = Services.Add((serviceName, null, ServiceLifetime.Transient, type, null)) };
         }
+
+        public TypeDescription AddService(
+            string serviceName,
+            object serviceKey,
+            ServiceLifetime serviceLifetime,
+            ServiceType type = ServiceType.Interface
+        )
+        {
+            return this with { Services = Services.Add((serviceName, serviceKey, serviceLifetime, type, null)) };
+        }
+
+        public TypeDescription AddScopedService(
+            string serviceName,
+            object serviceKey,
+            ServiceType type = ServiceType.Interface
+        )
+        {
+            return this with { Services = Services.Add((serviceName, serviceKey, ServiceLifetime.Scoped, type, null)) };
+        }
+
+        public TypeDescription AddSingletonService(
+            string serviceName,
+            object serviceKey,
+            ServiceType type = ServiceType.Interface,
+            SingletonServiceInstanceSharing instanceSharing = SingletonServiceInstanceSharing.SharedInstance
+        )
+        {
+            return this with
+            {
+                Services = Services.Add((serviceName, serviceKey, ServiceLifetime.Singleton, type, instanceSharing))
+            };
+        }
+
+        public TypeDescription AddTransientService(
+            string serviceName,
+            object serviceKey,
+            ServiceType type = ServiceType.Interface
+        )
+        {
+            return this with { Services = Services.Add((serviceName, serviceKey, ServiceLifetime.Transient, type, null)) };
+        }
+
     }
 
     #endregion
