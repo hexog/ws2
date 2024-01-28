@@ -21,15 +21,16 @@ internal static class ServiceAttributeRegistrarContextExtensions
 
         var serviceLifetime = serviceAttribute.Lifetime;
         Debug.Assert(Enum.IsDefined(serviceLifetime));
+        var serviceKey = serviceAttribute.ServiceKey;
         var service = serviceAttribute.Service
             ?? context.FindType(serviceAttribute.ServiceTypeName);
         if (service is null)
         {
-            context.ServiceCollection.TryAdd(new ServiceDescriptor(implementation, implementation, serviceLifetime));
+            context.ServiceCollection.TryAdd(new ServiceDescriptor(implementation, serviceKey, implementation, serviceLifetime));
         }
         else
         {
-            context.ServiceCollection.TryAddEnumerable(new ServiceDescriptor(service, implementation, serviceLifetime));
+            context.ServiceCollection.TryAddEnumerable(new ServiceDescriptor(service, serviceKey, implementation, serviceLifetime));
         }
     }
 }

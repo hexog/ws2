@@ -19,6 +19,8 @@ public abstract class ServiceAttribute : Attribute
         ServiceTypeName = serviceTypeName;
     }
 
+    public string? ServiceKey { get; set; }
+
     public Type? Service { get; set; }
 
     public string? ServiceTypeName { get; set; }
