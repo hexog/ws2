@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Ws2.Async.Locks;
 using Ws2.Async.Locks.PooledLocks;
 using Ws2.EqualityComparison;
 
@@ -27,10 +28,10 @@ public class PooledLockTest
     {
         var key = Random.Shared.Next();
         var lockHolder =
-            await pooledLock.AcquireAsync(key, EqualityComparers.Int32EqualityComparer, Timeout.InfiniteTimeSpan);
+            await pooledLock.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         var secondLockTask =
-            pooledLock.AcquireAsync(key, EqualityComparers.Int32EqualityComparer, Timeout.InfiniteTimeSpan);
+            pooledLock.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         secondLockTask.IsCompleted.Should().BeFalse();
 
@@ -45,9 +46,9 @@ public class PooledLockTest
     public async Task TestPooledLockOnDifferentKeys([Random(1)] int key1, [Random(1)] int key2)
     {
         using var lockHolder1 =
-            await pooledLock.AcquireAsync(key1, EqualityComparers.Int32EqualityComparer, Timeout.InfiniteTimeSpan);
+            await pooledLock.AcquireAsync(key1, Timeout.InfiniteTimeSpan);
         using var lockHolder2 =
-            await pooledLock.AcquireAsync(key2, EqualityComparers.Int32EqualityComparer, Timeout.InfiniteTimeSpan);
+            await pooledLock.AcquireAsync(key2, Timeout.InfiniteTimeSpan);
 
         Assert.Pass();
     }

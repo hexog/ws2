@@ -9,6 +9,4 @@ public static class EqualityComparers
     public static FastByteArrayComparer ByteArrayFastEqualityComparer => FastByteArrayComparer.Instance;
 
     public static FastByteArrayComparer ByteArrayFastReversedEqualityComparer => FastByteArrayComparer.InstanceReversed;
-
-    public static IntEqualityComparer Int32EqualityComparer => IntEqualityComparer.Instance;
 }
