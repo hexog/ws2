@@ -19,7 +19,7 @@ dotnet add package Ws2.Data
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddServicesByAttributes(typeof(Program).Assembly);
+builder.Services.AddServicesFromAssembly(typeof(Program).Assembly);
 ```
 
 > MyService.cs
@@ -48,7 +48,7 @@ public class SomeScopedService
 }
 ```
 
-Available attributes ([source](Ws2.DependencyInjection/ServiceAttribute.cs)):
+Available attributes ([source](Ws2.DependencyInjection/LifetimeAttributes/)):
 
 - `[ScopedService]`
 - `[SingletonService]`
