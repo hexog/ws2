@@ -5,220 +5,88 @@ using Microsoft.Extensions.Options;
 
 namespace Ws2.Hosting.Runners.Regular;
 
-public abstract class RegularProcess<TOptions> : BackgroundService
-    where TOptions : IRegularProcessOptions
+public abstract class RegularProcess : BackgroundService
 {
-    private readonly RegularProcessState state = new();
     protected readonly ILogger Logger;
-    protected readonly IOptionsMonitor<TOptions> OptionsMonitor;
-    private readonly string processName;
+    private readonly string regularProcessName;
 
-    protected RegularProcess(ILoggerFactory loggerFactory, IOptionsMonitor<TOptions> optionsMonitor)
+    private ulong runId = 0;
+    private DateTime lastExecutionTimestamp = DateTime.MinValue;
+    private readonly object lastExecutionTimestampLock = new();
+
+    protected RegularProcess(ILoggerFactory loggerFactory)
     {
-        Logger = loggerFactory.CreateLogger(GetType());
-        OptionsMonitor = optionsMonitor;
-        processName = GetType().Name;
-        state.Initialize(OptionsMonitor.CurrentValue);
-        optionsMonitor.OnChange(state.HandleUpdateOptions);
+        var type = GetType();
+        Logger = loggerFactory.CreateLogger(type);
+        regularProcessName = type.Name;
     }
 
-    protected abstract Task RunAsync(CancellationToken stoppingToken);
-
-    private async Task InnerExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        Logger.LogInformation("Starting regular process {RegularProcessName}", regularProcessName);
+        while (true)
         {
-            var options = OptionsMonitor.CurrentValue;
-            if (!options.IsEnabled)
-            {
-                var pauseTask = state.PauseTask;
-                Logger.LogInformation("Paused regular process {ProcessName}", processName);
-                await pauseTask.ConfigureAwait(false);
-                Logger.LogInformation("Unpaused regular process: {ProcessName}", processName);
-                continue;
-            }
-
             try
             {
-                if (options.Period < TimeSpan.FromMinutes(1))
+                var now = DateTime.UtcNow;
+                TimeSpan timeSinceLastExecution;
+                lock (lastExecutionTimestampLock)
                 {
-                    await RunAsync(stoppingToken).ConfigureAwait(false);
+                    timeSinceLastExecution = now - lastExecutionTimestamp;
                 }
-                else
+
+                if (timeSinceLastExecution < Interval)
                 {
-                    Logger.LogInformation("Executing regular process {ProcessName}", processName);
-                    await RunAsync(stoppingToken).ConfigureAwait(false);
-                    Logger.LogInformation("Completed execution of regular process {ProcessName}", processName);
+                    await Task.Delay(Interval - timeSinceLastExecution, stoppingToken).ConfigureAwait(false);
+                    continue;
                 }
+
+                var executionTime = await CompleteNextRunAsync(stoppingToken).ConfigureAwait(false);
+                await Task.Delay(Interval - executionTime, stoppingToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
-                throw;
+                Logger.LogWarning("Regular process {RegularProcessName} was canceled", regularProcessName);
+                break;
             }
             catch (Exception e)
             {
                 Logger.LogError(
                     e,
-                    "Unexpected error during execution of regular process {RegularProcess}",
-                    processName
+                    "Unexpected error during regular process {RegularProcessName} execution",
+                    regularProcessName
                 );
             }
-
-            try
-            {
-                await Task.Delay(options.Period, state.RestartToken).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                Logger.LogInformation("Resetting regular process {ProcessName}", processName);
-            }
         }
+
+        Logger.LogInformation("Stopped regular process {RegularProcessName}", regularProcessName);
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public async ValueTask<TimeSpan> CompleteNextRunAsync(CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Starting regular process {ProcessName}", processName);
+        TimeSpan executionTime;
+        using (Logger.BeginScope("RequestId: {RequestId}", runId.ToString()))
+        {
+            var startedTimestamp = Stopwatch.GetTimestamp();
+            await RunAsync(cancellationToken).ConfigureAwait(false);
+            executionTime = Stopwatch.GetElapsedTime(startedTimestamp);
+            Logger.LogInformation(
+                "Completed execution of regular process {RegularProcessName} in {ElapsedSeconds} seconds",
+                regularProcessName,
+                executionTime.TotalSeconds
+            );
+        }
 
-        state.Enable(stoppingToken);
+        lock (lastExecutionTimestampLock)
+        {
+            lastExecutionTimestamp = DateTime.UtcNow;
+        }
 
-        try
-        {
-            await InnerExecuteAsync(stoppingToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException e)
-        {
-            Logger.LogWarning(e, "Canceled execution of regular process {ProcessName}", processName);
-        }
-        finally
-        {
-            Logger.LogInformation("Stopped regular process {ProcessName}", processName);
-        }
+        runId++;
+        return executionTime;
     }
 
-    #region Regular Process State
+    protected abstract Task RunAsync(CancellationToken cancellationToken);
 
-    private class RegularProcessState
-    {
-        private CancellationToken? processStoppingToken;
-        private CancellationTokenSource? restartTokenSource;
-        private TaskCompletionSource? pauseTaskSource;
-        private TOptions? cachedOptions;
-        private readonly object lockObject = new();
-
-        public void Initialize(TOptions options)
-        {
-            cachedOptions = options;
-            if (!options.IsEnabled)
-            {
-                pauseTaskSource = new TaskCompletionSource();
-            }
-        }
-
-        public void Enable(CancellationToken stoppingToken)
-        {
-            lock (lockObject)
-            {
-                Debug.Assert(processStoppingToken is null);
-                processStoppingToken = stoppingToken;
-                Debug.Assert(restartTokenSource is null);
-                restartTokenSource = CancellationTokenSource.CreateLinkedTokenSource(processStoppingToken.Value);
-            }
-
-            stoppingToken.Register(Disable);
-        }
-
-        public void Pause()
-        {
-            lock (lockObject)
-            {
-                Restart();
-                Debug.Assert(pauseTaskSource is not null);
-                pauseTaskSource.SetResult();
-                pauseTaskSource = null;
-            }
-        }
-
-        public void Resume()
-        {
-            lock (lockObject)
-            {
-                Debug.Assert(pauseTaskSource is null);
-                pauseTaskSource = new TaskCompletionSource();
-                Restart();
-            }
-        }
-
-        public void Restart()
-        {
-            lock (lockObject)
-            {
-                Debug.Assert(restartTokenSource is not null);
-                restartTokenSource.Cancel();
-                Debug.Assert(processStoppingToken is not null);
-                restartTokenSource = CancellationTokenSource.CreateLinkedTokenSource(processStoppingToken.Value);
-            }
-        }
-
-        public void Disable()
-        {
-            lock (lockObject)
-            {
-                Debug.Assert(processStoppingToken is not null);
-                pauseTaskSource?.SetCanceled(processStoppingToken.Value);
-            }
-        }
-
-        public void HandleUpdateOptions(TOptions newOptions)
-        {
-            lock (lockObject)
-            {
-                Debug.Assert(cachedOptions is not null);
-                if (cachedOptions.IsEnabled != newOptions.IsEnabled)
-                {
-                    if (newOptions.IsEnabled)
-                    {
-                        Pause();
-                    }
-                    else
-                    {
-                        Resume();
-                    }
-                }
-
-                if (cachedOptions.Period != newOptions.Period)
-                {
-                    Restart();
-                }
-
-                cachedOptions = newOptions;
-            }
-        }
-
-
-        public Task PauseTask
-        {
-            get
-            {
-                lock (lockObject)
-                {
-                    Debug.Assert(pauseTaskSource is not null);
-                    return pauseTaskSource.Task;
-                }
-            }
-        }
-
-        public CancellationToken RestartToken
-        {
-            get
-            {
-                lock (lockObject)
-                {
-                    Debug.Assert(restartTokenSource is not null);
-                    return restartTokenSource.Token;
-                }
-            }
-        }
-    }
-
-    #endregion
+    protected abstract TimeSpan Interval { get; }
 }
