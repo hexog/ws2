@@ -3,10 +3,13 @@ using Ws2.DependencyInjection.Abstractions;
 
 namespace Ws2.Hosting.StartupTasks;
 
-public class StartupTaskImplementationRegistrar : IServiceTypeImplementationRegistrar<IStartupTask>
+public class StartupTaskImplementationRegistrar : IServiceRegistrar
 {
-    public void Register(IServiceAttributeRegistrarContext context, Type type)
+    public void TryRegister(IServiceRegistrarContext context, Type type)
     {
-        context.ServiceCollection.AddStartupTask(type);
+        if (type.IsAssignableTo(typeof(IStartupTask)) && context.IsValidImplementationType(type))
+        {
+            context.ServiceCollection.AddStartupTask(type);
+        }
     }
 }

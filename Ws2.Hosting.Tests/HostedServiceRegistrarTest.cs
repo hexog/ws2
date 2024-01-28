@@ -29,6 +29,14 @@ public class HostedServiceRegistrarTest
         }
     }
 
+    public abstract class AbstractHostedService : BackgroundService
+    {
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
     public class OtherClass
     {
     }
@@ -39,9 +47,8 @@ public class HostedServiceRegistrarTest
         var services = new ServiceCollection();
 
         services.AddServicesByAttributesFromTypes(
-            new[] { typeof(HostedService1), typeof(HostedService2), typeof(OtherClass) },
-            Array.Empty<IServiceAttributeRegistrar>(),
-            new IServiceTypeImplementationRegistrar[] { new HostedServiceRegistrar() }
+            new[] { typeof(HostedService1), typeof(HostedService2), typeof(AbstractHostedService), typeof(OtherClass) },
+            new IServiceRegistrar[] { new HostedServiceRegistrar() }
         );
 
         var serviceDescriptors = services.ToList();

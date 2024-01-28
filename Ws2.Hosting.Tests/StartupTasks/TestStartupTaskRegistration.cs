@@ -36,8 +36,7 @@ public class TestStartupTaskRegistration
             {
                 typeof(TestStartupTask)
             },
-            Array.Empty<IServiceAttributeRegistrar>(),
-            new[] { new StartupTaskImplementationRegistrar() }
+            new IServiceRegistrar[] { new StartupTaskImplementationRegistrar() }
         );
 
         var app = builder.Build();

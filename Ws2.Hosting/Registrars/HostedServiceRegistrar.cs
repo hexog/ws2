@@ -5,10 +5,13 @@ using Ws2.DependencyInjection.Abstractions;
 
 namespace Ws2.Hosting.Registrars;
 
-public class HostedServiceRegistrar : IServiceTypeImplementationRegistrar<IHostedService>
+public class HostedServiceRegistrar : IServiceRegistrar
 {
-    public void Register(IServiceAttributeRegistrarContext context, Type type)
+    public void TryRegister(IServiceRegistrarContext context, Type type)
     {
-        context.ServiceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IHostedService), type));
+        if (type.IsAssignableTo(typeof(IHostedService)) && context.IsValidImplementationType(type))
+        {
+            context.ServiceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(IHostedService), type));
+        }
     }
 }

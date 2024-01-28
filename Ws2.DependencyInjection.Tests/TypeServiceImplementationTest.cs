@@ -19,8 +19,7 @@ public class TypeServiceImplementationTest
                 typeof(MyBaseType),
                 typeof(MyInheritedType)
             },
-            Array.Empty<IServiceAttributeRegistrar>(),
-            new IServiceTypeImplementationRegistrar[] { new MyBaseTypeRegistrar(), new MyInterfaceRegistrar() }
+            new IServiceRegistrar[] { new MyBaseTypeRegistrar(), new MyInterfaceRegistrar() }
         );
 
         return serviceCollection.BuildServiceProvider();
@@ -61,11 +60,14 @@ public class MyInterfaceImplementation : IMyInterface
 {
 }
 
-public class MyInterfaceRegistrar : IServiceTypeImplementationRegistrar<IMyInterface>
+public class MyInterfaceRegistrar : IServiceRegistrar
 {
-    public void Register(IServiceAttributeRegistrarContext context, Type type)
+    public void TryRegister(IServiceRegistrarContext context, Type type)
     {
-        context.ServiceCollection.AddScoped(typeof(IMyInterface), type);
+        if (type.IsAssignableTo(typeof(IMyInterface)) && context.IsValidImplementationType(type))
+        {
+            context.ServiceCollection.AddScoped(typeof(IMyInterface), type);
+        }
     }
 }
 
@@ -81,10 +83,13 @@ public class MyInheritedType : MyBaseType
 {
 }
 
-public class MyBaseTypeRegistrar : IServiceTypeImplementationRegistrar<MyBaseType>
+public class MyBaseTypeRegistrar : IServiceRegistrar
 {
-    public void Register(IServiceAttributeRegistrarContext context, Type type)
+    public void TryRegister(IServiceRegistrarContext context, Type type)
     {
-        context.ServiceCollection.AddScoped(typeof(MyBaseType), type);
+        if (type.IsAssignableTo(typeof(MyBaseType)) && context.IsValidImplementationType(type))
+        {
+            context.ServiceCollection.AddScoped(typeof(MyBaseType), type);
+        }
     }
 }

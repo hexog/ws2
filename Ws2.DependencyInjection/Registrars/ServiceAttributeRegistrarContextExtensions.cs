@@ -9,20 +9,23 @@ namespace Ws2.DependencyInjection.Registrars;
 internal static class ServiceAttributeRegistrarContextExtensions
 {
     public static void RegisterByServiceAttribute(
-        this IServiceAttributeRegistrarContext context,
-        ServiceLifetime serviceLifetime,
+        this IServiceRegistrarContext context,
         Type implementation,
         ServiceAttribute serviceAttribute
     )
     {
+        if (!context.IsValidImplementationType(implementation))
+        {
+            return;
+        }
+
+        var serviceLifetime = serviceAttribute.Lifetime;
         Debug.Assert(Enum.IsDefined(serviceLifetime));
         var service = serviceAttribute.Service
-            ?? context.FIndType(serviceAttribute.ServiceTypeName);
+            ?? context.FindType(serviceAttribute.ServiceTypeName);
         if (service is null)
         {
-            context.ServiceCollection.TryAdd(
-                new ServiceDescriptor(implementation, implementation, serviceLifetime)
-            );
+            context.ServiceCollection.TryAdd(new ServiceDescriptor(implementation, implementation, serviceLifetime));
         }
         else
         {

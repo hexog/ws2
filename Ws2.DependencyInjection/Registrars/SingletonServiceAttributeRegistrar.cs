@@ -5,30 +5,45 @@ using Ws2.DependencyInjection.LifetimeAttributes.Abstract;
 
 namespace Ws2.DependencyInjection.Registrars;
 
-public class SingletonServiceAttributeRegistrar :
-    IServiceAttributeRegistrar<SingletonServiceBaseAttribute>
+public class SingletonServiceAttributeRegistrar : IServiceRegistrar
 {
     private readonly SingletonServiceAttributeBuildingContext buildingContext = new();
 
-    public void Register(IServiceAttributeRegistrarContext context, Type type, SingletonServiceBaseAttribute serviceAttribute)
+    public void Register(IServiceRegistrarContext context, Type type, SingletonServiceBaseAttribute[] serviceAttributes)
     {
         context.ServiceCollection.TryAdd(new ServiceDescriptor(type, type, ServiceLifetime.Singleton));
-        var serviceType = serviceAttribute.Service ?? context.FIndType(serviceAttribute.ServiceTypeName);
-        if (serviceType is null)
-        {
-            return;
-        }
 
-        if (serviceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
+        foreach (var serviceAttribute in serviceAttributes)
         {
-            context.ServiceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceType, type));
+            var serviceType = serviceAttribute.Service ?? context.FindType(serviceAttribute.ServiceTypeName);
+            if (serviceType is null)
+            {
+                return;
+            }
+
+            if (serviceAttribute.InstanceSharing == SingletonServiceInstanceSharing.OwnInstance)
+            {
+                context.ServiceCollection.TryAddEnumerable(ServiceDescriptor.Singleton(serviceType, type));
+            }
+            else
+            {
+                context.ServiceCollection.TryAddEnumerable(
+                    ServiceDescriptor.Singleton(serviceType, buildingContext.GetSingletonInstanceFactory(type))
+                );
+            }
         }
-        else
+    }
+
+    public void TryRegister(IServiceRegistrarContext context, Type type)
+    {
+        var attributes = TypeAttributeHelper.GetTypeAttributes<SingletonServiceBaseAttribute>(type);
+        if (attributes.Length != 0)
         {
-            context.ServiceCollection.TryAddEnumerable(
-                ServiceDescriptor.Singleton(serviceType, buildingContext.GetSingletonInstanceFactory(type))
+            Register(
+                context,
+                type,
+                attributes
             );
         }
-
     }
 }
