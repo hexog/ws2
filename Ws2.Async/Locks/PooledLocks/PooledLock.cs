@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace Ws2.Async.Locks.PooledLocks;
 
 public class PooledLock : ILock
@@ -9,6 +11,7 @@ public class PooledLock : ILock
         this.semaphorePool = semaphorePool;
     }
 
+    [MustUseReturnValue]
     public async ValueTask<ILockHolder> AcquireAsync<TKey>(
         TKey key,
         IEqualityComparer<TKey> comparer,
@@ -23,6 +26,7 @@ public class PooledLock : ILock
         return lockHolder;
     }
 
+    [MustUseReturnValue]
     public async ValueTask<ILockHolder> AcquireAsync<TKey>(
         TKey key,
         IEqualityComparer<TKey> comparer,

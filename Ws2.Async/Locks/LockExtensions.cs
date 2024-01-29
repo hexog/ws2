@@ -1,9 +1,11 @@
-﻿using Ws2.EqualityComparison;
+﻿using JetBrains.Annotations;
+using Ws2.EqualityComparison;
 
 namespace Ws2.Async.Locks;
 
 public static class LockExtensions
 {
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync(
         this ILock @lock,
         byte[] bytes,
@@ -13,6 +15,7 @@ public static class LockExtensions
         return @lock.AcquireAsync(bytes, EqualityComparers.ByteArrayEqualityComparer, cancellationToken);
     }
 
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync(
         this ILock @lock,
         byte[] bytes,
@@ -22,6 +25,7 @@ public static class LockExtensions
         return @lock.AcquireAsync(bytes, EqualityComparers.ByteArrayEqualityComparer, timeout);
     }
 
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync(
         this ILock @lock,
         string key,
@@ -31,6 +35,7 @@ public static class LockExtensions
         return @lock.AcquireAsync(key, StringComparer.Ordinal, cancellationToken);
     }
 
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync(
         this ILock @lock,
         string key,
@@ -40,6 +45,7 @@ public static class LockExtensions
         return @lock.AcquireAsync(key, StringComparer.Ordinal, timeout);
     }
 
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync<TKey>(
         this ILock @lock,
         TKey key,
@@ -49,6 +55,7 @@ public static class LockExtensions
         return @lock.AcquireAsync(key, EqualityComparer<TKey>.Default, cancellationToken);
     }
 
+    [MustUseReturnValue]
     public static ValueTask<ILockHolder> AcquireAsync<TKey>(
         this ILock @lock,
         TKey key,
