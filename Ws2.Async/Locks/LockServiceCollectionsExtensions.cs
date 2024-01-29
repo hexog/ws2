@@ -15,4 +15,28 @@ public static class LockServiceCollectionsExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddLock(this IServiceCollection services, object? lockKey, ILock lockInstance)
+    {
+        services.AddKeyedSingleton<ILock>(
+            lockKey,
+            (_, _) => lockInstance
+        );
+
+        return services;
+    }
+
+    public static IServiceCollection AddLock(
+        this IServiceCollection services,
+        object? lockKey,
+        Func<IServiceProvider, object?, ILock> lockFactory
+    )
+    {
+        services.AddKeyedSingleton(
+            lockKey,
+            lockFactory
+        );
+
+        return services;
+    }
 }
