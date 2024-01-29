@@ -2,7 +2,7 @@
 
 namespace Ws2.Async.Locks;
 
-public interface ILock
+public interface ILock : IAsyncDisposable
 {
     [MustUseReturnValue]
     ValueTask<ILockHolder> AcquireAsync<TKey>(TKey key, IEqualityComparer<TKey> comparer, TimeSpan timeout)
@@ -15,4 +15,14 @@ public interface ILock
         CancellationToken cancellationToken
     )
         where TKey : notnull;
+}
+
+public interface ILock<in TKey> : IAsyncDisposable
+    where TKey : notnull
+{
+    [MustUseReturnValue]
+    ValueTask<ILockHolder> AcquireAsync(TKey key, TimeSpan timeout);
+
+    [MustUseReturnValue]
+    ValueTask<ILockHolder> AcquireAsync(TKey key, CancellationToken cancellationToken);
 }

@@ -10,7 +10,7 @@ public static class LockServiceCollectionsExtensions
     {
         services.AddKeyedSingleton<ILock>(
             lockKey,
-            static (_, _) => new PooledLock(new SemaphoreSlimPool())
+            static (_, _) => new PooledSemaphoreLock(new SemaphoreSlimPool())
         );
 
         return services;

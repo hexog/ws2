@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Ws2.Hosting.Runners.Regular;
 

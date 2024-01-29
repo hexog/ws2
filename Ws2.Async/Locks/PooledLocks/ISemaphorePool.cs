@@ -1,6 +1,6 @@
 namespace Ws2.Async.Locks.PooledLocks;
 
-public interface ISemaphorePool
+public interface ISemaphorePool : IAsyncDisposable
 {
-    SemaphoreSlim GetSemaphore(int key);
+    ISemaphore GetSemaphore(int key);
 }

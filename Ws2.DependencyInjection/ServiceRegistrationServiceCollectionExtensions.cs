@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Ws2.DependencyInjection;
 using Ws2.DependencyInjection.Abstractions;
 using Ws2.DependencyInjection.Implementation;
 using Ws2.DependencyInjection.Registrars;

@@ -2,11 +2,9 @@
 
 namespace Ws2.Async.Locks.PooledLocks;
 
-public class SemaphoreSlimPool : ISemaphorePool, IDisposable
+public class SemaphoreSlimPool : ISemaphorePool
 {
-    private readonly record struct SemaphorePoolEntry(SemaphoreSlim Semaphore);
-
-    private readonly ConcurrentDictionary<int, SemaphorePoolEntry> semaphores = new();
+    private readonly ConcurrentDictionary<int, SemaphoreSlimWrapper> semaphores = new();
 
     private readonly int size = 0b_0011_1111; // 128
 
@@ -23,17 +21,16 @@ public class SemaphoreSlimPool : ISemaphorePool, IDisposable
         }
     }
 
-    public SemaphoreSlim GetSemaphore(int key)
+    public ISemaphore GetSemaphore(int key)
     {
-        var entry = semaphores.GetOrAdd(key % size, static _ => new SemaphorePoolEntry(new SemaphoreSlim(1, 1)));
-        return entry.Semaphore;
+        return semaphores.GetOrAdd(key % size, static _ => new SemaphoreSlimWrapper(new SemaphoreSlim(1, 1)));
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         foreach (var semaphorePoolEntry in semaphores.Values)
         {
-            semaphorePoolEntry.Semaphore.Dispose();
+            await semaphorePoolEntry.DisposeAsync();
         }
 
         GC.SuppressFinalize(this);

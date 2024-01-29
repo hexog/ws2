@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.Tests", "Ws2.Asyn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async", "Ws2.Async\Ws2.Async.csproj", "{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.Benchmarks", "Ws2.Async.Benchmarks\Ws2.Async.Benchmarks.csproj", "{1042AA64-1045-4146-8F29-1AD7A514875B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.DistributedLock", "Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj", "{39541566-7272-4F52-B811-96C01F8F8C3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,5 +88,13 @@ Global
 		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1042AA64-1045-4146-8F29-1AD7A514875B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1042AA64-1045-4146-8F29-1AD7A514875B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1042AA64-1045-4146-8F29-1AD7A514875B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1042AA64-1045-4146-8F29-1AD7A514875B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39541566-7272-4F52-B811-96C01F8F8C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39541566-7272-4F52-B811-96C01F8F8C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39541566-7272-4F52-B811-96C01F8F8C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39541566-7272-4F52-B811-96C01F8F8C3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

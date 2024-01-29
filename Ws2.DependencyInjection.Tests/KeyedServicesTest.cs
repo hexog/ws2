@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Ws2.DependencyInjection.Abstractions;
 using Ws2.DependencyInjection.LifetimeAttributes;
 
 namespace Ws2.DependencyInjection.Tests;

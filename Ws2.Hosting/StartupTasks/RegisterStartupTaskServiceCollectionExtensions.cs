@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Ws2.DependencyInjection.Abstractions;
 using Ws2.Hosting.StartupTasks;
 
 // ReSharper disable once CheckNamespace

@@ -1,40 +1,28 @@
-using System.Diagnostics;
-
 namespace Ws2.Async.Locks.PooledLocks;
 
-public class SemaphoreLockHolder : ILockHolder
+public abstract class SemaphoreLockHolder : ILockHolder
 {
-    private readonly SemaphoreSlim semaphore;
-    private readonly CancellationToken? cancellationToken;
-    private readonly TimeSpan? timeout;
+    protected readonly ISemaphore Semaphore;
+    private int isDisposed;
 
-    public SemaphoreLockHolder(SemaphoreSlim semaphore, CancellationToken cancellationToken)
+    protected SemaphoreLockHolder(ISemaphore semaphore)
     {
-        this.semaphore = semaphore;
-        this.cancellationToken = cancellationToken;
+        Semaphore = semaphore;
     }
 
-    public SemaphoreLockHolder(SemaphoreSlim semaphore, TimeSpan timeout)
-    {
-        this.semaphore = semaphore;
-        this.timeout = timeout;
-    }
+    public abstract Task AcquireAsync();
 
-    public async Task Acquire()
+    public async Task ReleaseAsync(CancellationToken cancellationToken = default)
     {
-        if (cancellationToken is { } cancellationTokenValue)
+        if (Interlocked.Exchange(ref isDisposed, 1) == 0)
         {
-            await semaphore.WaitAsync(cancellationTokenValue);
-            return;
+            await Semaphore.ReleaseAsync(cancellationToken);
         }
-
-        Debug.Assert(timeout.HasValue);
-        await semaphore.WaitAsync(timeout.Value);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        semaphore.Release();
+        await ReleaseAsync();
         GC.SuppressFinalize(this);
     }
 }
