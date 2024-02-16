@@ -6,19 +6,35 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class LockServiceCollectionsExtensions
 {
-    public static IServiceCollection AddLock(this IServiceCollection services, object? lockKey)
+    public static IServiceCollection AddLock<TLockKey>(
+        this IServiceCollection services,
+        object? lockKey
+    ) where TLockKey : notnull
     {
-        services.AddKeyedSingleton<ILock>(
+        return AddLock(services, lockKey, EqualityComparer<TLockKey>.Default);
+    }
+
+    public static IServiceCollection AddLock<TLockKey>(
+        this IServiceCollection services,
+        object? lockKey,
+        IEqualityComparer<TLockKey> equalityComparer
+    ) where TLockKey : notnull
+    {
+        services.AddKeyedSingleton<ILock<TLockKey>>(
             lockKey,
-            static (_, _) => new PooledSemaphoreLock(new SemaphoreSlimPool())
+            (_, _) => new PooledSemaphoreLock<TLockKey>(new SemaphoreSlimPool(), equalityComparer)
         );
 
         return services;
     }
 
-    public static IServiceCollection AddLock(this IServiceCollection services, object? lockKey, ILock lockInstance)
+    public static IServiceCollection AddLock<TLockKey>(
+        this IServiceCollection services,
+        object? lockKey,
+        ILock<TLockKey> lockInstance
+    ) where TLockKey : notnull
     {
-        services.AddKeyedSingleton<ILock>(
+        services.AddKeyedSingleton<ILock<TLockKey>>(
             lockKey,
             (_, _) => lockInstance
         );
@@ -26,11 +42,11 @@ public static class LockServiceCollectionsExtensions
         return services;
     }
 
-    public static IServiceCollection AddLock(
+    public static IServiceCollection AddLock<TLockKey>(
         this IServiceCollection services,
         object? lockKey,
-        Func<IServiceProvider, object?, ILock> lockFactory
-    )
+        Func<IServiceProvider, object?, ILock<TLockKey>> lockFactory
+    ) where TLockKey : notnull
     {
         services.AddKeyedSingleton(
             lockKey,

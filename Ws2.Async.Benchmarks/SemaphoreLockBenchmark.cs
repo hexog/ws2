@@ -15,7 +15,7 @@ public class PooledSemaphoreLockBenchmark
     [Params(128, 1024)]
     public static int PoolSize { get; set; }
 
-    private PooledSemaphoreLock lockFactory = null!;
+    private PooledSemaphoreLock<int> lockFactory = null!;
     private DistributedLock<int> distributedLockFactory = null!;
     private Task<int>[] tasks = null!;
     private static readonly DirectoryInfo LockFilesDirectory = new("./locks");
@@ -23,7 +23,7 @@ public class PooledSemaphoreLockBenchmark
     [IterationSetup]
     public void Setup()
     {
-        lockFactory = new PooledSemaphoreLock(new SemaphoreSlimPool { Size = PoolSize });
+        lockFactory = new PooledSemaphoreLock<int>(new SemaphoreSlimPool { Size = PoolSize }, EqualityComparer<int>.Default);
         distributedLockFactory = new DistributedLock<int>(
             new DistributedLockProviderFactory<int>(
                 new FileDistributedSynchronizationProvider(LockFilesDirectory),

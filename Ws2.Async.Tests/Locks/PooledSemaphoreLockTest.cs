@@ -6,12 +6,12 @@ namespace Ws2.Async.Tests.Locks;
 
 public class PooledSemaphoreLockTest
 {
-    private PooledSemaphoreLock pooledSemaphoreLock = null!;
+    private PooledSemaphoreLock<int> pooledSemaphoreLock = null!;
 
     [SetUp]
     public void SetUp()
     {
-        pooledSemaphoreLock = new PooledSemaphoreLock(new SemaphoreSlimPool());
+        pooledSemaphoreLock = new PooledSemaphoreLock<int>(new SemaphoreSlimPool(), EqualityComparer<int>.Default);
     }
 
     [TearDown]
@@ -56,7 +56,7 @@ public class PooledSemaphoreLockTest
     [Test]
     public async Task TestReleaseTwiceDoesNotBreak()
     {
-        var lockHolder = await pooledSemaphoreLock.AcquireAsync("foo", Timeout.InfiniteTimeSpan);
+        var lockHolder = await pooledSemaphoreLock.AcquireAsync(333, Timeout.InfiniteTimeSpan);
 
         await lockHolder.ReleaseAsync();
 

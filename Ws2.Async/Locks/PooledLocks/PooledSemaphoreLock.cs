@@ -2,38 +2,37 @@ using JetBrains.Annotations;
 
 namespace Ws2.Async.Locks.PooledLocks;
 
-public class PooledSemaphoreLock : ILock
+public class PooledSemaphoreLock<TKey> : ILock<TKey>
+    where TKey : notnull
 {
-    protected readonly ISemaphorePool SemaphorePool;
+    private readonly ISemaphorePool semaphorePool;
+    private readonly IEqualityComparer<TKey> equalityComparer;
 
-    public PooledSemaphoreLock(ISemaphorePool semaphorePool)
+    public PooledSemaphoreLock(ISemaphorePool semaphorePool, IEqualityComparer<TKey> equalityComparer)
     {
-        SemaphorePool = semaphorePool;
+        this.semaphorePool = semaphorePool;
+        this.equalityComparer = equalityComparer;
     }
 
     [MustUseReturnValue]
-    public async ValueTask<ILockHolder> AcquireAsync<TKey>(
+    public async ValueTask<ILockHolder> AcquireAsync(
         TKey key,
-        IEqualityComparer<TKey> comparer,
         TimeSpan timeout
     )
-        where TKey : notnull
     {
-        var hashCode = comparer.GetHashCode(key);
-        var semaphore = SemaphorePool.GetSemaphore(hashCode);
+        var hashCode = equalityComparer.GetHashCode(key);
+        var semaphore = semaphorePool.GetSemaphore(hashCode);
         return await AcquireAsync(new SemaphoreTimeoutLockHolder(semaphore, timeout));
     }
 
     [MustUseReturnValue]
-    public async ValueTask<ILockHolder> AcquireAsync<TKey>(
+    public async ValueTask<ILockHolder> AcquireAsync(
         TKey key,
-        IEqualityComparer<TKey> comparer,
         CancellationToken cancellationToken
     )
-        where TKey : notnull
     {
-        var hashCode = comparer.GetHashCode(key);
-        var semaphore = SemaphorePool.GetSemaphore(hashCode);
+        var hashCode = equalityComparer.GetHashCode(key);
+        var semaphore = semaphorePool.GetSemaphore(hashCode);
         return await AcquireAsync(new SemaphoreCancellableLockHolder(semaphore, cancellationToken));
     }
 
@@ -45,28 +44,7 @@ public class PooledSemaphoreLock : ILock
 
     public async ValueTask DisposeAsync()
     {
-        await SemaphorePool.DisposeAsync();
+        await semaphorePool.DisposeAsync();
         GC.SuppressFinalize(this);
-    }
-}
-
-public class PooledSemaphoreLock<TKey> : PooledSemaphoreLock, ILock<TKey>
-    where TKey : notnull
-{
-    protected readonly IEqualityComparer<TKey> EqualityComparer;
-
-    public PooledSemaphoreLock(ISemaphorePool semaphorePool, IEqualityComparer<TKey> equalityComparer) : base(semaphorePool)
-    {
-        EqualityComparer = equalityComparer;
-    }
-
-    public async ValueTask<ILockHolder> AcquireAsync(TKey key, TimeSpan timeout)
-    {
-        return await AcquireAsync(key, EqualityComparer, timeout);
-    }
-
-    public async ValueTask<ILockHolder> AcquireAsync(TKey key, CancellationToken cancellationToken)
-    {
-        return await AcquireAsync(key, EqualityComparer, cancellationToken);
     }
 }
