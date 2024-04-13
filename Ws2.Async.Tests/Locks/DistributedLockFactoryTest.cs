@@ -1,13 +1,17 @@
 ﻿using FluentAssertions;
 using Medallion.Threading.FileSystem;
 using Ws2.Async.DistributedLock;
+using Ws2.Async.Locks;
 
 namespace Ws2.Async.Tests.Locks;
 
 [Timeout(1000)]
-public class DistributedLockTest
+public class DistributedLockFactoryTest
 {
-    private DistributedLock<int> lockFactory = null!;
+#pragma warning disable NUnit1032
+    private DistributedLockFactory lockFactoryFactory = null!;
+#pragma warning enable NUnit1032
+
 
     private static readonly DirectoryInfo LockDirectory = new("./lock");
 
@@ -20,18 +24,15 @@ public class DistributedLockTest
     [SetUp]
     public void SetUp()
     {
-        lockFactory = new DistributedLock<int>(
-            new DistributedLockProviderFactory<int>(
-                new FileDistributedSynchronizationProvider(LockDirectory),
-                static key => key.ToString()
-            )
+        lockFactoryFactory = new DistributedLockFactory(
+            new FileDistributedSynchronizationProvider(LockDirectory)
         );
     }
 
     [TearDown]
-    public async Task TearDown()
+    public void TearDown()
     {
-        await lockFactory.DisposeAsync();
+        ((IDisposable)lockFactoryFactory).Dispose();
     }
 
     [Test]
@@ -39,12 +40,12 @@ public class DistributedLockTest
     {
         const int key = 12345;
 
-        var lockHolderTask = lockFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
+        var lockHolderTask = lockFactoryFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         lockHolderTask.IsCompleted.Should().BeTrue();
         var lockHolder = await lockHolderTask;
 
-        var secondLockHolder = lockFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
+        var secondLockHolder = lockFactoryFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
         secondLockHolder.IsCompleted.Should().BeFalse();
 
         await lockHolder.ReleaseAsync();
@@ -61,12 +62,12 @@ public class DistributedLockTest
         const int key = 12345;
         const int key2 = 123456;
 
-        var lockHolderTask = lockFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
+        var lockHolderTask = lockFactoryFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         lockHolderTask.IsCompleted.Should().BeTrue();
         var lockHolder = await lockHolderTask;
 
-        var secondLockHolder = lockFactory.AcquireAsync(key2, Timeout.InfiniteTimeSpan);
+        var secondLockHolder = lockFactoryFactory.AcquireAsync(key2, Timeout.InfiniteTimeSpan);
         secondLockHolder.IsCompleted.Should().BeTrue();
 
         await lockHolder.ReleaseAsync();

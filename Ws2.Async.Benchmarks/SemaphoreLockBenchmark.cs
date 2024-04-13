@@ -15,29 +15,23 @@ public class PooledSemaphoreLockBenchmark
     [Params(128, 1024)]
     public static int PoolSize { get; set; }
 
-    private PooledSemaphoreLock<int> lockFactory = null!;
-    private DistributedLock<int> distributedLockFactory = null!;
+    private PooledSemaphoreLockFactory lockFactoryFactory = null!;
+    private DistributedLockFactory distributedLockFactoryFactory = null!;
     private Task<int>[] tasks = null!;
     private static readonly DirectoryInfo LockFilesDirectory = new("./locks");
 
     [IterationSetup]
     public void Setup()
     {
-        lockFactory = new PooledSemaphoreLock<int>(new SemaphoreSlimPool { Size = PoolSize }, EqualityComparer<int>.Default);
-        distributedLockFactory = new DistributedLock<int>(
-            new DistributedLockProviderFactory<int>(
-                new FileDistributedSynchronizationProvider(LockFilesDirectory),
-                static x => (x % PoolSize).ToString()
-            )
-        );
+        lockFactoryFactory = new PooledSemaphoreLockFactory(new SemaphoreSlimPool { Size = PoolSize });
+        distributedLockFactoryFactory = new DistributedLockFactory(new FileDistributedSynchronizationProvider(LockFilesDirectory));
         tasks = new Task<int>[RequestCount];
     }
 
     [IterationCleanup]
     public void Cleanup()
     {
-        lockFactory.DisposeAsync().AsTask().GetAwaiter().GetResult();
-        distributedLockFactory.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        lockFactoryFactory.DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
 
     [Benchmark]
@@ -66,13 +60,13 @@ public class PooledSemaphoreLockBenchmark
 
     private async Task<int> RunJobWithLock(int id)
     {
-        await using var _ = await lockFactory.AcquireAsync(id, Timeout.InfiniteTimeSpan);
+        await using var _ = await lockFactoryFactory.AcquireAsync(id, Timeout.InfiniteTimeSpan);
         return await RunJob(id);
     }
 
     private async Task<int> RunJobWithDistributedLock(int id)
     {
-        await using var _ = await distributedLockFactory.AcquireAsync(id, Timeout.InfiniteTimeSpan);
+        await using var _ = await distributedLockFactoryFactory.AcquireAsync(id, Timeout.InfiniteTimeSpan);
         return await RunJob(id);
     }
 

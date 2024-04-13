@@ -26,13 +26,31 @@ public class SemaphoreSlimPool : ISemaphorePool
         return semaphores.GetOrAdd(key % size, static _ => new SemaphoreSlimWrapper(new SemaphoreSlim(1, 1)));
     }
 
+    protected virtual void Dispose(bool disposing)
+    {
+        foreach (var value in semaphores.Values)
+        {
+            value.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        foreach (var value in semaphores.Values)
+        {
+            await value.DisposeAsync();
+        }
+    }
+
     public async ValueTask DisposeAsync()
     {
-        foreach (var semaphorePoolEntry in semaphores.Values)
-        {
-            await semaphorePoolEntry.DisposeAsync();
-        }
-
+        await DisposeAsyncCore();
         GC.SuppressFinalize(this);
     }
 }

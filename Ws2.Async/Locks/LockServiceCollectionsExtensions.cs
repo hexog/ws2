@@ -6,35 +6,26 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class LockServiceCollectionsExtensions
 {
-    public static IServiceCollection AddLock<TLockKey>(
+    public static IServiceCollection AddLockFactory(
         this IServiceCollection services,
         object? lockKey
-    ) where TLockKey : notnull
+    )
     {
-        return AddLock(services, lockKey, EqualityComparer<TLockKey>.Default);
-    }
-
-    public static IServiceCollection AddLock<TLockKey>(
-        this IServiceCollection services,
-        object? lockKey,
-        IEqualityComparer<TLockKey> equalityComparer
-    ) where TLockKey : notnull
-    {
-        services.AddKeyedSingleton<ILock<TLockKey>>(
+        services.AddKeyedSingleton<ILockFactory>(
             lockKey,
-            (_, _) => new PooledSemaphoreLock<TLockKey>(new SemaphoreSlimPool(), equalityComparer)
+            (_, _) => new PooledSemaphoreLockFactory(new SemaphoreSlimPool())
         );
 
         return services;
     }
 
-    public static IServiceCollection AddLock<TLockKey>(
+    public static IServiceCollection AddLockFactory(
         this IServiceCollection services,
         object? lockKey,
-        ILock<TLockKey> lockInstance
-    ) where TLockKey : notnull
+        ILockFactory lockInstance
+    )
     {
-        services.AddKeyedSingleton<ILock<TLockKey>>(
+        services.AddKeyedSingleton<ILockFactory>(
             lockKey,
             (_, _) => lockInstance
         );
@@ -42,11 +33,11 @@ public static class LockServiceCollectionsExtensions
         return services;
     }
 
-    public static IServiceCollection AddLock<TLockKey>(
+    public static IServiceCollection AddLockFactory(
         this IServiceCollection services,
         object? lockKey,
-        Func<IServiceProvider, object?, ILock<TLockKey>> lockFactory
-    ) where TLockKey : notnull
+        Func<IServiceProvider, object?, ILockFactory> lockFactory
+    )
     {
         services.AddKeyedSingleton(
             lockKey,

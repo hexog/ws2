@@ -1,6 +1,6 @@
 ﻿namespace Ws2.Async.Locks.PooledLocks;
 
-public class SemaphoreSlimWrapper : ISemaphore
+public sealed class SemaphoreSlimWrapper : ISemaphore
 {
     private readonly SemaphoreSlim semaphore;
 
@@ -19,21 +19,27 @@ public class SemaphoreSlimWrapper : ISemaphore
         await semaphore.WaitAsync(timeSpan);
     }
 
-    public void Release()
-    {
-        semaphore.Release();
-    }
-
     public Task ReleaseAsync(CancellationToken cancellationToken)
     {
         semaphore.Release();
         return Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
+    public void Dispose()
     {
         semaphore.Dispose();
-        GC.SuppressFinalize(this);
-        return ValueTask.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        if (semaphore is IAsyncDisposable semaphoreAsyncDisposable)
+        {
+            await semaphoreAsyncDisposable.DisposeAsync();
+        }
+        else
+        {
+            semaphore.Dispose();
+        }
     }
 }

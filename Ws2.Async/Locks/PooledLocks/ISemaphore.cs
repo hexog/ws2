@@ -1,6 +1,6 @@
 ﻿namespace Ws2.Async.Locks.PooledLocks;
 
-public interface ISemaphore : IAsyncDisposable
+public interface ISemaphore : IDisposable, IAsyncDisposable
 {
     Task WaitAsync(CancellationToken cancellationToken);
 
