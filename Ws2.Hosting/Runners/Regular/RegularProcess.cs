@@ -13,6 +13,8 @@ public abstract class RegularProcess : BackgroundService
     private DateTime lastExecutionTimestamp = DateTime.MinValue;
     private readonly object lastExecutionTimestampLock = new();
 
+    private const int RetryAttemptCount = 2;
+
     protected RegularProcess(ILoggerFactory loggerFactory)
     {
         var type = GetType();
@@ -23,39 +25,71 @@ public abstract class RegularProcess : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Logger.LogInformation("Starting regular process {RegularProcessName}", regularProcessName);
-        while (true)
+        try
         {
-            try
+            while (true)
             {
-                var now = DateTime.UtcNow;
-                TimeSpan timeSinceLastExecution;
-                lock (lastExecutionTimestampLock)
+                var executionTime = TimeSpan.Zero;
+                try
                 {
-                    timeSinceLastExecution = now - lastExecutionTimestamp;
+                    var now = DateTime.UtcNow;
+                    TimeSpan timeSinceLastExecution;
+                    lock (lastExecutionTimestampLock)
+                    {
+                        timeSinceLastExecution = now - lastExecutionTimestamp;
+                    }
+
+                    if (timeSinceLastExecution < Interval)
+                    {
+                        await Task.Delay(Interval - timeSinceLastExecution, stoppingToken).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    for (var i = RetryAttemptCount; i >= 0; i--)
+                    {
+                        try
+                        {
+                            executionTime = await CompleteNextRunAsync(stoppingToken).ConfigureAwait(false);
+                            break;
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            throw;
+                        }
+                        catch when (i == 0)
+                        {
+                            throw;
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.LogWarning(
+                                e,
+                                "Unexpected error during regular process {RegularProcessName} execution, retries left: {RetriesLeft}",
+                                regularProcessName,
+                                i
+                            );
+                        }
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(
+                        e,
+                        "Unexpected error during regular process {RegularProcessName} execution",
+                        regularProcessName
+                    );
                 }
 
-                if (timeSinceLastExecution < Interval)
-                {
-                    await Task.Delay(Interval - timeSinceLastExecution, stoppingToken).ConfigureAwait(false);
-                    continue;
-                }
-
-                var executionTime = await CompleteNextRunAsync(stoppingToken).ConfigureAwait(false);
                 await Task.Delay(Interval - executionTime, stoppingToken).ConfigureAwait(false);
             }
-            catch (OperationCanceledException)
-            {
-                Logger.LogWarning("Regular process {RegularProcessName} was canceled", regularProcessName);
-                break;
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(
-                    e,
-                    "Unexpected error during regular process {RegularProcessName} execution",
-                    regularProcessName
-                );
-            }
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogWarning("Regular process {RegularProcessName} was canceled", regularProcessName);
         }
 
         Logger.LogInformation("Stopped regular process {RegularProcessName}", regularProcessName);
