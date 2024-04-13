@@ -84,9 +84,9 @@ public static partial class DbContextUpdateExtensions
         where TDbContext : DbContext
         where TEntity : class
     {
-        await updater(entity);
+        await updater(entity).ConfigureAwait(false);
         context.Set<TEntity>().Update(entity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public static Task UpdateSaveAsync<TDbContext, TEntity>(
@@ -120,11 +120,11 @@ public static partial class DbContextUpdateExtensions
         var entitiesList = entities.ToList();
         foreach (var entity in entitiesList)
         {
-            await updater(entity);
+            await updater(entity).ConfigureAwait(false);
         }
 
         context.Set<TEntity>().UpdateRange(entitiesList);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
 
@@ -170,9 +170,9 @@ public static partial class DbContextUpdateExtensions
         where TDbContext : DbContext
         where TEntity : class
     {
-        var newEntity = await converter(entity);
+        var newEntity = await converter(entity).ConfigureAwait(false);
         context.Set<TEntity>().Update(newEntity);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public static async Task UpdateSaveAsync<TDbContext, TEntity>(
@@ -187,10 +187,10 @@ public static partial class DbContextUpdateExtensions
         var entitiesList = entities.ToList();
         for (var i = 0; i < entitiesList.Count; i++)
         {
-            entitiesList[i] = await converter(entitiesList[i]);
+            entitiesList[i] = await converter(entitiesList[i]).ConfigureAwait(false);
         }
 
         context.Set<TEntity>().UpdateRange(entitiesList);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }
