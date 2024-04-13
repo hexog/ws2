@@ -11,9 +11,7 @@ public static class ServiceRegistrarImplementation
         IEnumerable<IServiceRegistrar> serviceRegistrars
     )
     {
-        var typeList = types
-            .Concat(serviceCollection.Where(x => x.ImplementationType is not null).Select(x => x.ImplementationType!))
-            .ToList();
+        var typeList = types.ToList();
         var context = new ServiceRegistrarContext(
             serviceCollection,
             typeList,
