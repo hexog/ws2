@@ -11,6 +11,6 @@ public class SemaphoreTimeoutLockHolder : SemaphoreLockHolder
 
     public override async Task AcquireAsync()
     {
-        await Semaphore.WaitAsync(timeout);
+        await Semaphore.WaitAsync(timeout).ConfigureAwait(false);
     }
 }

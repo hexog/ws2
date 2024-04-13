@@ -11,12 +11,12 @@ public sealed class SemaphoreSlimWrapper : ISemaphore
 
     public async Task WaitAsync(CancellationToken cancellationToken)
     {
-        await semaphore.WaitAsync(cancellationToken);
+        await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task WaitAsync(TimeSpan timeSpan)
     {
-        await semaphore.WaitAsync(timeSpan);
+        await semaphore.WaitAsync(timeSpan).ConfigureAwait(false);
     }
 
     public Task ReleaseAsync(CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ public sealed class SemaphoreSlimWrapper : ISemaphore
         // ReSharper disable once SuspiciousTypeConversion.Global
         if (semaphore is IAsyncDisposable semaphoreAsyncDisposable)
         {
-            await semaphoreAsyncDisposable.DisposeAsync();
+            await semaphoreAsyncDisposable.DisposeAsync().ConfigureAwait(false);
         }
         else
         {

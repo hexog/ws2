@@ -14,7 +14,7 @@ public sealed class DistributedLockHolder : ILockHolder
 
     public async Task ReleaseAsync(CancellationToken cancellationToken = default)
     {
-        await DisposeAsync();
+        await DisposeAsync().ConfigureAwait(false);
     }
 
     public void Dispose()
@@ -24,6 +24,6 @@ public sealed class DistributedLockHolder : ILockHolder
 
     public async ValueTask DisposeAsync()
     {
-        await handle.DisposeAsync();
+        await handle.DisposeAsync().ConfigureAwait(false);
     }
 }

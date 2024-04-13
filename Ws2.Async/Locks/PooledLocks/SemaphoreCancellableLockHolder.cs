@@ -11,6 +11,6 @@ public class SemaphoreCancellableLockHolder : SemaphoreLockHolder
 
     public override async Task AcquireAsync()
     {
-        await Semaphore.WaitAsync(cancellationToken);
+        await Semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
     }
 }

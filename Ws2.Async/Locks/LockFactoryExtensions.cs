@@ -8,7 +8,7 @@ public static class LockFactoryExtensions
         CancellationToken cancellationToken
     )
     {
-        return await lockFactory.AcquireAsync(LockKeyConverterDictionary.Convert(key), cancellationToken);
+        return await lockFactory.AcquireAsync(LockKeyConverterDictionary.Convert(key), cancellationToken).ConfigureAwait(false);
     }
 
     public static async ValueTask<ILockHolder> AcquireAsync<TKey>(
@@ -17,6 +17,6 @@ public static class LockFactoryExtensions
         TimeSpan timeout
     )
     {
-        return await lockFactory.AcquireAsync(LockKeyConverterDictionary.Convert(key), timeout);
+        return await lockFactory.AcquireAsync(LockKeyConverterDictionary.Convert(key), timeout).ConfigureAwait(false);
     }
 }

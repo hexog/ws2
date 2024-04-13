@@ -25,7 +25,7 @@ public class PooledSemaphoreLockFactory : ILockFactory
     {
         var hashCode = keyComparer.GetHashCode(key);
         var semaphore = semaphorePool.GetSemaphore(hashCode);
-        return await AcquireAsync(new SemaphoreTimeoutLockHolder(semaphore, timeout));
+        return await AcquireAsync(new SemaphoreTimeoutLockHolder(semaphore, timeout)).ConfigureAwait(false);
     }
 
     [MustUseReturnValue]
@@ -34,12 +34,12 @@ public class PooledSemaphoreLockFactory : ILockFactory
     {
         var hashCode = keyComparer.GetHashCode(key);
         var semaphore = semaphorePool.GetSemaphore(hashCode);
-        return await AcquireAsync(new SemaphoreCancellableLockHolder(semaphore, cancellationToken));
+        return await AcquireAsync(new SemaphoreCancellableLockHolder(semaphore, cancellationToken)).ConfigureAwait(false);
     }
 
     private static async ValueTask<ILockHolder> AcquireAsync(SemaphoreLockHolder lockHolder)
     {
-        await lockHolder.AcquireAsync();
+        await lockHolder.AcquireAsync().ConfigureAwait(false);
         return lockHolder;
     }
 
@@ -61,12 +61,12 @@ public class PooledSemaphoreLockFactory : ILockFactory
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-        await semaphorePool.DisposeAsync();
+        await semaphorePool.DisposeAsync().ConfigureAwait(false);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore();
+        await DisposeAsyncCore().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 

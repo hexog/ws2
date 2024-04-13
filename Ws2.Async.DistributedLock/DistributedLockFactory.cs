@@ -15,14 +15,16 @@ public sealed class DistributedLockFactory : ILockFactory
 
     public async ValueTask<ILockHolder> AcquireAsync(ReadOnlyMemory<byte> key, TimeSpan timeout)
     {
-        var distributedSynchronizationHandle = await distributedLockProvider.AcquireLockAsync(GetKeyString(key), timeout: timeout);
+        var distributedSynchronizationHandle =
+            await distributedLockProvider.AcquireLockAsync(GetKeyString(key), timeout: timeout).ConfigureAwait(false);
         return new DistributedLockHolder(distributedSynchronizationHandle);
     }
 
     public async ValueTask<ILockHolder> AcquireAsync(ReadOnlyMemory<byte> key, CancellationToken cancellationToken)
     {
         var distributedSynchronizationHandle =
-            await distributedLockProvider.AcquireLockAsync(GetKeyString(key), cancellationToken: cancellationToken);
+            await distributedLockProvider.AcquireLockAsync(GetKeyString(key), cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
         return new DistributedLockHolder(distributedSynchronizationHandle);
     }
 

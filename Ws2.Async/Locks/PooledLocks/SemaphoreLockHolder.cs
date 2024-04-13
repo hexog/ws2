@@ -16,7 +16,7 @@ public abstract class SemaphoreLockHolder : ILockHolder
     {
         if (Interlocked.Exchange(ref isReleased, 1) == 0)
         {
-            await Semaphore.ReleaseAsync(cancellationToken);
+            await Semaphore.ReleaseAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -36,12 +36,12 @@ public abstract class SemaphoreLockHolder : ILockHolder
 
     protected virtual async ValueTask DisposeAsyncCore()
     {
-        await ReleaseAsync();
+        await ReleaseAsync().ConfigureAwait(false);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore();
+        await DisposeAsyncCore().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 }

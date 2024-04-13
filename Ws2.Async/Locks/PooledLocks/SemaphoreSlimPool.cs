@@ -44,13 +44,13 @@ public class SemaphoreSlimPool : ISemaphorePool
     {
         foreach (var value in semaphores.Values)
         {
-            await value.DisposeAsync();
+            await value.DisposeAsync().ConfigureAwait(false);
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore();
+        await DisposeAsyncCore().ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 }
