@@ -19,15 +19,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="" />
+        <None Include="README.md" Pack="true" PackagePath=""/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Ws2.DependencyInjection.Abstractions\Ws2.DependencyInjection.Abstractions.csproj" />
+        <ProjectReference Include="..\Ws2.DependencyInjection.Abstractions\Ws2.DependencyInjection.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

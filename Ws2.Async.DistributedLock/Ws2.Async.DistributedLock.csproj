@@ -17,11 +17,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ws2.Async\Ws2.Async.csproj" />
+        <ProjectReference Include="..\Ws2.Async\Ws2.Async.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DistributedLock.Core" Version="1.0.6" />
+        <PackageReference Include="DistributedLock.Core"/>
     </ItemGroup>
 
 </Project>

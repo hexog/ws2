@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-      <PackageReference Include="DistributedLock.FileSystem" Version="1.0.2" />
+        <PackageReference Include="BenchmarkDotNet"/>
+        <PackageReference Include="DistributedLock.FileSystem"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj" />
-      <ProjectReference Include="..\Ws2.Async\Ws2.Async.csproj" />
+        <ProjectReference Include="..\Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj"/>
+        <ProjectReference Include="..\Ws2.Async\Ws2.Async.csproj"/>
     </ItemGroup>
 
 </Project>

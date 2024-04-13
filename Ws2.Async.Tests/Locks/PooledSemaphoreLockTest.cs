@@ -15,9 +15,9 @@ public class PooledSemaphoreLockTest
     }
 
     [TearDown]
-    public void TearDown()
+    public async Task TearDown()
     {
-        pooledSemaphoreLock.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        await pooledSemaphoreLock.DisposeAsync();
     }
 
     [Test]

@@ -28,6 +28,12 @@ public class DistributedLockTest
         );
     }
 
+    [TearDown]
+    public async Task TearDown()
+    {
+        await lockFactory.DisposeAsync();
+    }
+
     [Test]
     public async Task TestLockSameKey()
     {
