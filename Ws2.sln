@@ -3,41 +3,44 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection", "Ws2.DependencyInjection\Ws2.DependencyInjection.csproj", "{7154A174-11A1-413E-B008-A88C143A0B59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.DependencyInjection", "Ws2.DependencyInjection\Ws2.DependencyInjection.csproj", "{7154A174-11A1-413E-B008-A88C143A0B59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection.Tests", "Ws2.DependencyInjection.Tests\Ws2.DependencyInjection.Tests.csproj", "{C4825713-D547-4B77-84F3-C6C171A68EF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.DependencyInjection.Tests", "Ws2.DependencyInjection.Tests\Ws2.DependencyInjection.Tests.csproj", "{C4825713-D547-4B77-84F3-C6C171A68EF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Data", "Ws2.Data\Ws2.Data.csproj", "{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Data", "Ws2.Data\Ws2.Data.csproj", "{7F04E345-7EEB-48D6-A74F-4A004E2F1ED7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Data.Tests", "Ws2.Data.Tests\Ws2.Data.Tests.csproj", "{333DB4CA-CF29-45C4-996E-50A169B8CA87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Data.Tests", "Ws2.Data.Tests\Ws2.Data.Tests.csproj", "{333DB4CA-CF29-45C4-996E-50A169B8CA87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Hosting", "Ws2.Hosting\Ws2.Hosting.csproj", "{C2C89C2B-B7FF-4430-9D1B-8DD6A9F1722C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Hosting", "Ws2.Hosting\Ws2.Hosting.csproj", "{C2C89C2B-B7FF-4430-9D1B-8DD6A9F1722C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Hosting.Tests", "Ws2.Hosting.Tests\Ws2.Hosting.Tests.csproj", "{59C5D806-7254-4755-AF2E-339C7B6F0E78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Hosting.Tests", "Ws2.Hosting.Tests\Ws2.Hosting.Tests.csproj", "{59C5D806-7254-4755-AF2E-339C7B6F0E78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.DependencyInjection.Abstractions", "Ws2.DependencyInjection.Abstractions\Ws2.DependencyInjection.Abstractions.csproj", "{E266867C-75EB-4B77-9CBE-B0A2062DB563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.DependencyInjection.Abstractions", "Ws2.DependencyInjection.Abstractions\Ws2.DependencyInjection.Abstractions.csproj", "{E266867C-75EB-4B77-9CBE-B0A2062DB563}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison", "Ws2.EqualityComparison\Ws2.EqualityComparison.csproj", "{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.EqualityComparison", "Ws2.EqualityComparison\Ws2.EqualityComparison.csproj", "{22035EBC-BFD3-4E20-A7E5-54C1A44279B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison.Benchmarks", "Ws2.EqualityComparison.Benchmarks\Ws2.EqualityComparison.Benchmarks.csproj", "{A518CE39-EB85-4656-9828-F1E641C4A1E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.EqualityComparison.Benchmarks", "Ws2.EqualityComparison.Benchmarks\Ws2.EqualityComparison.Benchmarks.csproj", "{A518CE39-EB85-4656-9828-F1E641C4A1E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.EqualityComparison.Tests", "Ws2.EqualityComparison.Tests\Ws2.EqualityComparison.Tests.csproj", "{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.EqualityComparison.Tests", "Ws2.EqualityComparison.Tests\Ws2.EqualityComparison.Tests.csproj", "{70FE1A4E-12ED-4E8C-AD64-0E3A0D2CD2E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.Tests", "Ws2.Async.Tests\Ws2.Async.Tests.csproj", "{DFD05448-C08A-4B43-8CF9-6E054851B610}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Async.Tests", "Ws2.Async.Tests\Ws2.Async.Tests.csproj", "{DFD05448-C08A-4B43-8CF9-6E054851B610}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async", "Ws2.Async\Ws2.Async.csproj", "{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Async", "Ws2.Async\Ws2.Async.csproj", "{FAA52A86-604C-44DC-BF4E-1BCD063EEA25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.Benchmarks", "Ws2.Async.Benchmarks\Ws2.Async.Benchmarks.csproj", "{1042AA64-1045-4146-8F29-1AD7A514875B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Async.Benchmarks", "Ws2.Async.Benchmarks\Ws2.Async.Benchmarks.csproj", "{1042AA64-1045-4146-8F29-1AD7A514875B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2.Async.DistributedLock", "Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj", "{39541566-7272-4F52-B811-96C01F8F8C3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2.Async.DistributedLock", "Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj", "{39541566-7272-4F52-B811-96C01F8F8C3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CE99CBA-5AD0-4A52-A2C8-EF40E9EAC7D0}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7154A174-11A1-413E-B008-A88C143A0B59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -96,5 +99,11 @@ Global
 		{39541566-7272-4F52-B811-96C01F8F8C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39541566-7272-4F52-B811-96C01F8F8C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39541566-7272-4F52-B811-96C01F8F8C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77D846A6-9666-4097-8089-5C1587D92636}
 	EndGlobalSection
 EndGlobal
