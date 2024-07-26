@@ -5,12 +5,12 @@ using Ws2.Async.Locks;
 
 namespace Ws2.Async.Tests.Locks;
 
-[Timeout(1000)]
+[CancelAfter(1000)]
 public class DistributedLockFactoryTest
 {
 #pragma warning disable NUnit1032
     private DistributedLockFactory lockFactoryFactory = null!;
-#pragma warning enable NUnit1032
+#pragma warning restore NUnit1032
 
 
     private static readonly DirectoryInfo LockDirectory = new("./lock");

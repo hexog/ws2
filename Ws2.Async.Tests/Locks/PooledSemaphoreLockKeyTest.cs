@@ -4,7 +4,7 @@ using Ws2.Async.Locks.PooledLocks;
 
 namespace Ws2.Async.Tests.Locks;
 
-[Timeout(1000)]
+[CancelAfter(1000)]
 public class PooledSemaphoreLockKeyTest
 {
     private PooledSemaphoreLockFactory pooledSemaphoreLockFactory = null!;
