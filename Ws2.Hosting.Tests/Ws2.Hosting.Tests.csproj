@@ -30,4 +30,5 @@
         <ProjectReference Include="..\Ws2.DependencyInjection\Ws2.DependencyInjection.csproj" />
         <ProjectReference Include="..\Ws2.Hosting\Ws2.Hosting.csproj" />
     </ItemGroup>
+
 </Project>
