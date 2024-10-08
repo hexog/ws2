@@ -6,26 +6,26 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class LockServiceCollectionsExtensions
 {
-    public static IServiceCollection AddLockFactory(
+    public static IServiceCollection AddSemaphoreLockProvider(
         this IServiceCollection services,
         object? lockKey
     )
     {
-        services.AddKeyedSingleton<ILockFactory>(
+        services.AddKeyedSingleton<ILockProvider>(
             lockKey,
-            (_, _) => new PooledSemaphoreLockFactory(new SemaphoreSlimPool())
+            (_, _) => new PooledSemaphoreLockProvider(new SemaphoreSlimPool())
         );
 
         return services;
     }
 
-    public static IServiceCollection AddLockFactory(
+    public static IServiceCollection AddLockProvider(
         this IServiceCollection services,
         object? lockKey,
-        ILockFactory lockInstance
+        ILockProvider lockInstance
     )
     {
-        services.AddKeyedSingleton<ILockFactory>(
+        services.AddKeyedSingleton<ILockProvider>(
             lockKey,
             (_, _) => lockInstance
         );
@@ -33,10 +33,10 @@ public static class LockServiceCollectionsExtensions
         return services;
     }
 
-    public static IServiceCollection AddLockFactory(
+    public static IServiceCollection AddLockProvider(
         this IServiceCollection services,
         object? lockKey,
-        Func<IServiceProvider, object?, ILockFactory> lockFactory
+        Func<IServiceProvider, object?, ILockProvider> lockFactory
     )
     {
         services.AddKeyedSingleton(

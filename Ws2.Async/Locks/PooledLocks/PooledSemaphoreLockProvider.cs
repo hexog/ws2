@@ -3,17 +3,17 @@ using Ws2.EqualityComparison.ByteMemory;
 
 namespace Ws2.Async.Locks.PooledLocks;
 
-public class PooledSemaphoreLockFactory : ILockFactory
+public class PooledSemaphoreLockProvider : ILockProvider
 {
     private readonly ISemaphorePool semaphorePool;
     private readonly EqualityComparer<ReadOnlyMemory<byte>> keyComparer;
 
-    public PooledSemaphoreLockFactory(ISemaphorePool semaphorePool)
+    public PooledSemaphoreLockProvider(ISemaphorePool semaphorePool)
         : this(semaphorePool, ReadOnlyByteMemoryEqualityComparer.Instance)
     {
     }
 
-    public PooledSemaphoreLockFactory(ISemaphorePool semaphorePool, EqualityComparer<ReadOnlyMemory<byte>> keyComparer)
+    public PooledSemaphoreLockProvider(ISemaphorePool semaphorePool, EqualityComparer<ReadOnlyMemory<byte>> keyComparer)
     {
         this.semaphorePool = semaphorePool;
         this.keyComparer = keyComparer;

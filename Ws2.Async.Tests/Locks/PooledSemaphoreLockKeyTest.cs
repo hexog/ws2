@@ -7,18 +7,18 @@ namespace Ws2.Async.Tests.Locks;
 [CancelAfter(1000)]
 public class PooledSemaphoreLockKeyTest
 {
-    private PooledSemaphoreLockFactory pooledSemaphoreLockFactory = null!;
+    private PooledSemaphoreLockProvider pooledSemaphoreLockProvider = null!;
 
     [SetUp]
     public void SetUp()
     {
-        pooledSemaphoreLockFactory = new PooledSemaphoreLockFactory(new SemaphoreSlimPool());
+        pooledSemaphoreLockProvider = new PooledSemaphoreLockProvider(new SemaphoreSlimPool());
     }
 
     [TearDown]
     public async Task TearDown()
     {
-        await pooledSemaphoreLockFactory.DisposeAsync();
+        await pooledSemaphoreLockProvider.DisposeAsync();
     }
 
     [Test]
@@ -26,10 +26,10 @@ public class PooledSemaphoreLockKeyTest
     {
         var key = Random.Shared.Next();
         var lockHolder =
-            await pooledSemaphoreLockFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
+            await pooledSemaphoreLockProvider.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         var secondLockTask =
-            pooledSemaphoreLockFactory.AcquireAsync(key, Timeout.InfiniteTimeSpan);
+            pooledSemaphoreLockProvider.AcquireAsync(key, Timeout.InfiniteTimeSpan);
 
         secondLockTask.IsCompleted.Should().BeFalse();
 
@@ -45,9 +45,9 @@ public class PooledSemaphoreLockKeyTest
     public async Task TestPooledLockOnDifferentKeys([Random(1)] int key1, [Random(1)] int key2)
     {
         await using var lockHolder1 =
-            await pooledSemaphoreLockFactory.AcquireAsync(key1, Timeout.InfiniteTimeSpan);
+            await pooledSemaphoreLockProvider.AcquireAsync(key1, Timeout.InfiniteTimeSpan);
         await using var lockHolder2 =
-            await pooledSemaphoreLockFactory.AcquireAsync(key2, Timeout.InfiniteTimeSpan);
+            await pooledSemaphoreLockProvider.AcquireAsync(key2, Timeout.InfiniteTimeSpan);
 
         Assert.Pass();
     }

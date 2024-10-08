@@ -2,7 +2,7 @@
 
 namespace Ws2.Async.Locks;
 
-public interface ILockFactory : IDisposable, IAsyncDisposable
+public interface ILockProvider : IDisposable, IAsyncDisposable
 {
     [MustUseReturnValue]
     ValueTask<ILockHolder> AcquireAsync(ReadOnlyMemory<byte> key, TimeSpan timeout);

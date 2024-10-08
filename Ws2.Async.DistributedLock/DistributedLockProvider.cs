@@ -4,11 +4,11 @@ using Ws2.Async.Locks;
 
 namespace Ws2.Async.DistributedLock;
 
-public sealed class DistributedLockFactory : ILockFactory
+public sealed class DistributedLockProvider : ILockProvider
 {
     private readonly IDistributedLockProvider distributedLockProvider;
 
-    public DistributedLockFactory(IDistributedLockProvider distributedLockProvider)
+    public DistributedLockProvider(IDistributedLockProvider distributedLockProvider)
     {
         this.distributedLockProvider = distributedLockProvider;
     }
