@@ -1,14 +1,7 @@
 ﻿namespace Ws2.Async.Locks.PooledLocks;
 
-public sealed class SemaphoreSlimWrapper : ISemaphore
+public sealed class SemaphoreSlimWrapper(SemaphoreSlim semaphore) : ISemaphore
 {
-    private readonly SemaphoreSlim semaphore;
-
-    public SemaphoreSlimWrapper(SemaphoreSlim semaphore)
-    {
-        this.semaphore = semaphore;
-    }
-
     public async Task WaitAsync(CancellationToken cancellationToken)
     {
         await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);

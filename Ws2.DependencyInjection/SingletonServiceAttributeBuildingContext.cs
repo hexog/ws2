@@ -20,7 +20,7 @@ internal class SingletonServiceAttributeBuildingContext
         var serviceProviderServiceExtensions = typeof(ServiceProviderKeyedServiceExtensions);
         var getRequiredServiceMethod = serviceProviderServiceExtensions.GetMethod(
             "GetRequiredKeyedService",
-            new[] { typeof(IServiceProvider), typeof(Type), typeof(object) }
+            [typeof(IServiceProvider), typeof(Type), typeof(object)]
         );
 
         Debug.Assert(getRequiredServiceMethod is not null);
@@ -32,7 +32,7 @@ internal class SingletonServiceAttributeBuildingContext
         var serviceProviderServiceExtensions = typeof(ServiceProviderServiceExtensions);
         var getRequiredServiceMethod = serviceProviderServiceExtensions.GetMethod(
             "GetRequiredService",
-            new[] { typeof(IServiceProvider), typeof(Type) }
+            [typeof(IServiceProvider), typeof(Type)]
         );
         Debug.Assert(getRequiredServiceMethod is not null);
         return getRequiredServiceMethod;

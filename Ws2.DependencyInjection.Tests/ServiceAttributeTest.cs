@@ -18,7 +18,7 @@ public class ServiceAttributeTest
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        serviceCollection = new ServiceCollection();
+        serviceCollection = [];
         var (testAssembly, assemblyTypes) = CreateTestAssembly(GoodTypeDescriptions);
         serviceCollection.AddServicesFromAssembly(testAssembly);
         typeNameToType = assemblyTypes;
@@ -332,18 +332,18 @@ public class ServiceAttributeTest
         {
             if (serviceType is null)
             {
-                var constructorInfo = serviceAttributeType.GetConstructor(Array.Empty<Type>());
+                var constructorInfo = serviceAttributeType.GetConstructor([]);
                 Debug.Assert(constructorInfo is not null);
                 return new CustomAttributeBuilder(
                     constructorInfo,
-                    Array.Empty<object?>(),
-                    new[] { serviceAttributeType.GetProperty("ServiceKey")! },
-                    new[] { serviceKey }
+                    [],
+                    [serviceAttributeType.GetProperty("ServiceKey")!],
+                    [serviceKey]
                 );
             }
             else
             {
-                var constructorInfo = serviceAttributeType.GetConstructor(new[] { typeof(string) });
+                var constructorInfo = serviceAttributeType.GetConstructor([typeof(string)]);
                 Debug.Assert(constructorInfo is not null);
 
                 if (typeof(SingletonServiceAttribute).IsAssignableFrom(serviceAttributeType))
@@ -354,17 +354,17 @@ public class ServiceAttributeTest
                     Debug.Assert(serviceKeyProperty is not null);
                     return new CustomAttributeBuilder(
                         constructorInfo,
-                        new object?[] { serviceType.FullName },
-                        new[] { instanceSharingProperty, serviceKeyProperty },
-                        new[] { instanceSharing, serviceKey }
+                        [serviceType.FullName],
+                        [instanceSharingProperty, serviceKeyProperty],
+                        [instanceSharing, serviceKey]
                     );
                 }
 
                 return new CustomAttributeBuilder(
                     constructorInfo,
-                    new object?[] { serviceType.FullName },
-                    new[] { serviceAttributeType.GetProperty("ServiceKey")! },
-                    new[] { serviceKey }
+                    [serviceType.FullName],
+                    [serviceAttributeType.GetProperty("ServiceKey")!],
+                    [serviceKey]
                 );
             }
         }

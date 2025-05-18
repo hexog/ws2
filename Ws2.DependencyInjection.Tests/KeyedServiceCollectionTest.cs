@@ -21,7 +21,7 @@ public class KeyedServiceCollectionTest
     public void TestRegisterOnCollectionWithKeyedServicesDoesNotThrow()
     {
         Assert.DoesNotThrow(
-            () => serviceCollection.AddServicesFromTypes(Array.Empty<Type>(), Array.Empty<IServiceRegistrar>())
+            () => serviceCollection.AddServicesFromTypes([], [])
         );
     }
 }

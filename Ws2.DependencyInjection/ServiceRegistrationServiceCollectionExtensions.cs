@@ -9,11 +9,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class ServiceRegistrationServiceCollectionExtensions
 {
     public static readonly IServiceRegistrar[] DefaultAttributeRegistrars =
-    {
+    [
         new SingletonServiceAttributeRegistrar(),
         new ScopedServiceAttributeRegistrar(),
         new TransientServiceAttributeRegistrar()
-    };
+    ];
 
     public static IServiceCollection AddServicesFromTypes(
         this IServiceCollection serviceCollection,

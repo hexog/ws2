@@ -1,14 +1,9 @@
 namespace Ws2.Async.Locks.PooledLocks;
 
-public abstract class SemaphoreLockHolder : ILockHolder
+public abstract class SemaphoreLockHolder(ISemaphore semaphore) : ILockHolder
 {
-    protected readonly ISemaphore Semaphore;
+    protected readonly ISemaphore Semaphore = semaphore;
     private int isReleased;
-
-    protected SemaphoreLockHolder(ISemaphore semaphore)
-    {
-        Semaphore = semaphore;
-    }
 
     public abstract Task AcquireAsync();
 

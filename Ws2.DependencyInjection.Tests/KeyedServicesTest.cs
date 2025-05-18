@@ -39,7 +39,7 @@ public class KeyedServicesTest
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddServicesFromTypes(
-            new[] { typeof(IInterface1), typeof(ScopedService1), typeof(TransientService1), typeof(SingletonService1) },
+            [typeof(IInterface1), typeof(ScopedService1), typeof(TransientService1), typeof(SingletonService1)],
             ServiceRegistrationServiceCollectionExtensions.DefaultAttributeRegistrars
         );
 

@@ -11,15 +11,14 @@ public class TypeServiceImplementationTest
         var serviceCollection = new ServiceCollection();
 
         serviceCollection.AddServicesFromTypes(
-            new[]
-            {
+            [
                 typeof(IMyInterface),
                 typeof(MyInterfaceImplementation),
                 typeof(UnusedType),
                 typeof(MyBaseType),
                 typeof(MyInheritedType)
-            },
-            new IServiceRegistrar[] { new MyBaseTypeRegistrar(), new MyInterfaceRegistrar() }
+            ],
+            [new MyBaseTypeRegistrar(), new MyInterfaceRegistrar()]
         );
 
         return serviceCollection.BuildServiceProvider();

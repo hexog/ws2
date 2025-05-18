@@ -4,15 +4,8 @@ using Ws2.Async.Locks;
 
 namespace Ws2.Async.DistributedLock;
 
-public sealed class DistributedLockProvider : ILockProvider
+public sealed class DistributedLockProvider(IDistributedLockProvider distributedLockProvider) : ILockProvider
 {
-    private readonly IDistributedLockProvider distributedLockProvider;
-
-    public DistributedLockProvider(IDistributedLockProvider distributedLockProvider)
-    {
-        this.distributedLockProvider = distributedLockProvider;
-    }
-
     public async ValueTask<ILockHolder> AcquireAsync(ReadOnlyMemory<byte> key, TimeSpan timeout)
     {
         var distributedSynchronizationHandle =

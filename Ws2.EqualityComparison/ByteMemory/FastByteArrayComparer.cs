@@ -1,16 +1,9 @@
 ﻿namespace Ws2.EqualityComparison.ByteMemory;
 
-public class FastByteArrayComparer : EqualityComparer<byte[]>
+public class FastByteArrayComparer(bool fromStart) : EqualityComparer<byte[]>
 {
     public static readonly FastByteArrayComparer Instance = new(true);
     public static readonly FastByteArrayComparer InstanceReversed = new(false);
-
-    private readonly bool fromStart;
-
-    public FastByteArrayComparer(bool fromStart)
-    {
-        this.fromStart = fromStart;
-    }
 
     public override bool Equals(byte[]? x, byte[]? y)
     {

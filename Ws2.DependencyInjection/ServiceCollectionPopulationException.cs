@@ -1,12 +1,8 @@
 namespace Ws2.DependencyInjection;
 
-public class AttributeServiceCollectionPopulationException : Exception
+public class AttributeServiceCollectionPopulationException(string message, Exception? innerException = null)
+    : Exception(message, innerException)
 {
-    public AttributeServiceCollectionPopulationException(string message, Exception? innerException = null)
-        : base(message, innerException)
-    {
-    }
-
     public static void ThrowMultipleTypesWithSameFullNameExist(string typeFullName)
     {
         throw new AttributeServiceCollectionPopulationException($"Multiple types with same full name exist: {typeFullName}");

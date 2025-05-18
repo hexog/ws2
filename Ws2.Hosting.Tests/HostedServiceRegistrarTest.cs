@@ -47,8 +47,8 @@ public class HostedServiceRegistrarTest
         var services = new ServiceCollection();
 
         services.AddServicesFromTypes(
-            new[] { typeof(HostedService1), typeof(HostedService2), typeof(AbstractHostedService), typeof(OtherClass) },
-            new IServiceRegistrar[] { new HostedServiceRegistrar() }
+            [typeof(HostedService1), typeof(HostedService2), typeof(AbstractHostedService), typeof(OtherClass)],
+            [new HostedServiceRegistrar()]
         );
 
         var serviceDescriptors = services.ToList();

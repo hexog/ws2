@@ -20,11 +20,7 @@ public sealed class ScopedServiceAttribute : ScopedServiceBaseAttribute
     public override ServiceLifetime Lifetime => ServiceLifetime.Scoped;
 }
 
-public sealed class ScopedServiceAttribute<TService> : ScopedServiceBaseAttribute
+public sealed class ScopedServiceAttribute<TService>() : ScopedServiceBaseAttribute(typeof(TService))
 {
-    public ScopedServiceAttribute() : base(typeof(TService))
-    {
-    }
-
     public override ServiceLifetime Lifetime => ServiceLifetime.Scoped;
 }

@@ -34,7 +34,7 @@ public class ServiceRegistrarContext : IServiceRegistrarContext
             }
             else
             {
-                nameToType[type.Name] = new List<Type> { type };
+                nameToType[type.Name] = [type];
             }
 
             if (type.FullName is { } typeFullName)
@@ -45,7 +45,7 @@ public class ServiceRegistrarContext : IServiceRegistrarContext
                 }
                 else
                 {
-                    fullNameToType[typeFullName] = new List<Type> { type };
+                    fullNameToType[typeFullName] = [type];
                 }
             }
         }

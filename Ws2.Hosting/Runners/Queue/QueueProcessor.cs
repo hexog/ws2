@@ -8,7 +8,8 @@ public interface IQueueRunner<in TMessage>
     Task RunAsync(IReadOnlyCollection<TMessage> messages, CancellationToken cancellationToken);
 }
 
-public class QueueProcessor<TRunner, TMessage> : BackgroundRunnerBase<TRunner>
+public class QueueProcessor<TRunner, TMessage>(ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+    : BackgroundRunnerBase<TRunner>(loggerFactory, serviceProvider)
     where TRunner : IQueueRunner<TMessage>
 {
     private readonly Channel<TMessage> channel = Channel.CreateUnbounded<TMessage>(
@@ -19,11 +20,7 @@ public class QueueProcessor<TRunner, TMessage> : BackgroundRunnerBase<TRunner>
         }
     );
 
-    private readonly List<TMessage> buffer = new();
-
-    public QueueProcessor(ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(loggerFactory, serviceProvider)
-    {
-    }
+    private readonly List<TMessage> buffer = [];
 
     protected override async Task ExecuteRunnerAsync(TRunner runner, CancellationToken cancellationToken)
     {

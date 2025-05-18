@@ -32,11 +32,10 @@ public class TestStartupTaskRegistration
         var builder = Host.CreateApplicationBuilder();
 
         builder.Services.AddServicesFromTypes(
-            new[]
-            {
+            [
                 typeof(TestStartupTask)
-            },
-            new IServiceRegistrar[] { new StartupTaskImplementationRegistrar() }
+            ],
+            [new StartupTaskImplementationRegistrar()]
         );
 
         var app = builder.Build();

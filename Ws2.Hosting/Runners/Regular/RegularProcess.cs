@@ -7,17 +7,15 @@ public interface IRegularProcessRunner
     Task RunAsync(CancellationToken cancellationToken);
 }
 
-public abstract class RegularProcess<TRunner> : BackgroundRunnerBase<TRunner>
+public abstract class RegularProcess<TRunner>(
+    ILoggerFactory loggerFactory,
+    IServiceProvider serviceProvider,
+    TimeProvider timeProvider
+)
+    : BackgroundRunnerBase<TRunner>(loggerFactory, serviceProvider)
     where TRunner : IRegularProcessRunner
 {
-    private readonly TimeProvider timeProvider;
     private long lastExecutionTimestamp;
-
-    protected RegularProcess(ILoggerFactory loggerFactory, IServiceProvider serviceProvider, TimeProvider timeProvider)
-        : base(loggerFactory, serviceProvider)
-    {
-        this.timeProvider = timeProvider;
-    }
 
     protected override async Task ExecuteRunnerAsync(TRunner runner, CancellationToken cancellationToken)
     {
