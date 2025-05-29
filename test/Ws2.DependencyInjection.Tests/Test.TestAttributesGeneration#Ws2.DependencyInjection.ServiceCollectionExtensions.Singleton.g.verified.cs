@@ -1,4 +1,4 @@
-﻿//HintName: ServiceCollectionExtensions.Singleton.g.cs
+﻿//HintName: Ws2.DependencyInjection.ServiceCollectionExtensions.Singleton.g.cs
 #nullable enable
 namespace Ws2.DependencyInjection.Extensions
 {

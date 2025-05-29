@@ -1,4 +1,4 @@
-﻿//HintName: ServiceCollectionExtensions.ScopedGeneric.g.cs
+﻿//HintName: Ws2.DependencyInjection.ServiceCollectionExtensions.ScopedGeneric.g.cs
 #nullable enable
 namespace Ws2.DependencyInjection.Extensions
 {

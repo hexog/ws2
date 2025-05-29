@@ -1,4 +1,4 @@
-﻿//HintName: ServiceCollectionExtensions.TransientGeneric.g.cs
+﻿//HintName: Ws2.DependencyInjection.ServiceCollectionExtensions.TransientGeneric.g.cs
 #nullable enable
 namespace Ws2.DependencyInjection.Extensions
 {
