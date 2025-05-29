@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/benchmark/">
+    <Project Path="benchmark/Ws2.Async.Benchmarks/Ws2.Async.Benchmarks.csproj" />
+    <Project Path="benchmark/Ws2.EqualityComparison.Benchmarks/Ws2.EqualityComparison.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Ws2.Async.DistributedLock/Ws2.Async.DistributedLock.csproj" />
+    <Project Path="src/Ws2.Async/Ws2.Async.csproj" />
+    <Project Path="src/Ws2.DependencyInjection/Ws2.DependencyInjection.csproj" />
+    <Project Path="src/Ws2.EqualityComparison/Ws2.EqualityComparison.csproj" />
+    <Project Path="src/Ws2.Hosting/Ws2.Hosting.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Ws2.Async.Tests/Ws2.Async.Tests.csproj" />
+    <Project Path="test/Ws2.DependencyInjection.IntegrationTests/Ws2.DependencyInjection.IntegrationTests.csproj" />
+    <Project Path="test/Ws2.DependencyInjection.Tests/Ws2.DependencyInjection.Tests.csproj" />
+    <Project Path="test/Ws2.EqualityComparison.Tests/Ws2.EqualityComparison.Tests.csproj" />
+    <Project Path="test/Ws2.Hosting.Tests/Ws2.Hosting.Tests.csproj" />
+  </Folder>
+</Solution>

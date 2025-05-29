@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet"/>
+        <PackageReference Include="DistributedLock.FileSystem"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Ws2.Async.DistributedLock\Ws2.Async.DistributedLock.csproj"/>
+        <ProjectReference Include="..\..\src\Ws2.Async\Ws2.Async.csproj"/>
+    </ItemGroup>
+
+</Project>

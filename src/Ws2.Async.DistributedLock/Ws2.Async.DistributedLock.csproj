@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Ws2.Async.DistributedLock</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ws2.Async\Ws2.Async.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DistributedLock.Core" />
+  </ItemGroup>
+
+</Project>
