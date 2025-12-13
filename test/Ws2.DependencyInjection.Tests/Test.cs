@@ -37,6 +37,15 @@ public class Test
             [Singleton]
             [Singleton(ServiceKey = "ff")]
             public class ServiceF : ServiceD;
+            
+            [Singleton<IServiceB>]
+            [Singleton<IServiceC>(Shared = false)]
+            public class ServiceG : IServiceB, IServiceC;
+            
+            [Singleton<IServiceA>(Shared = false)]
+            [Singleton<IServiceB>]
+            [Singleton<IServiceC>]
+            public class ServiceH : IServiceA, IServiceB, IServiceC;
             """;
 
         return TestHelper.Verify(source);

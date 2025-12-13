@@ -1,10 +1,25 @@
 ﻿namespace Ws2.DependencyInjection;
 
-internal readonly record struct RegisteredSingleton(
-    string ImplementationTypeName,
-    object? Key
-)
+internal struct RegisteredSingleton()
 {
-    public readonly string ImplementationTypeName = ImplementationTypeName;
-    public readonly object? Key = Key;
+    public readonly List<Registration> Registrations = new(1);
+
+    public bool AllSeparateInstances;
+
+    public void AddRegistration(string? serviceTypeName, bool sharedInstance, object? key)
+    {
+        Registrations.Add(new Registration(serviceTypeName, sharedInstance, key));
+        AllSeparateInstances = AllSeparateInstances && !sharedInstance;
+    }
+
+    public readonly struct Registration(
+        string? serviceTypeName,
+        bool sharedInstance,
+        object? key
+    )
+    {
+        public readonly string? ServiceTypeName = serviceTypeName;
+        public readonly bool SharedInstance = sharedInstance;
+        public readonly object? Key = key;
+    }
 }
