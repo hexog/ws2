@@ -4,7 +4,7 @@ internal struct RegisteredSingleton()
 {
     public readonly List<Registration> Registrations = new(1);
 
-    public bool AllSeparateInstances;
+    public bool AllSeparateInstances = true;
 
     public void AddRegistration(string? serviceTypeName, bool sharedInstance, object? key)
     {
