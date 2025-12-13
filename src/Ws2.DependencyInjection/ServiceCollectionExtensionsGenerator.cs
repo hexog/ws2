@@ -252,7 +252,7 @@ public class ServiceCollectionExtensionsGenerator : IIncrementalGenerator
                 registeredSingletons[implementationTypeName] = singletons = new RegisteredSingleton();
             }
 
-            singletons.AddRegistration(serviceTypeName, sharedSingletonInstance is null or true, serviceKey);
+            singletons.AddRegistration(serviceTypeName, sharedSingletonInstance is true, serviceKey);
         }
 
         foreach (var (implementationTypeName, serviceKey, serviceTypeName, lifetime, sharedSingletonInstance) in allDescriptors.Right)
@@ -267,7 +267,7 @@ public class ServiceCollectionExtensionsGenerator : IIncrementalGenerator
                 registeredSingletons[implementationTypeName] = singletons = new RegisteredSingleton();
             }
 
-            singletons.AddRegistration(serviceTypeName, sharedSingletonInstance is null or true, serviceKey);
+            singletons.AddRegistration(serviceTypeName, sharedSingletonInstance is true, serviceKey);
         }
 
         foreach (var entry in registeredSingletons)
@@ -285,6 +285,7 @@ public class ServiceCollectionExtensionsGenerator : IIncrementalGenerator
             {
                 sb.Append("            services.Add(new global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor(");
                 sb.Append("serviceType: typeof(global::").Append(implementationTypeName).Append(')');
+                sb.Append(", serviceKey: \"Ws2.DependencyInjection.SharedSingleton\"");
                 sb.Append(", implementationType: typeof(global::").Append(implementationTypeName).Append(')');
                 sb.AppendLine(", lifetime: global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton));");
 
@@ -296,28 +297,25 @@ public class ServiceCollectionExtensionsGenerator : IIncrementalGenerator
                         continue;
                     }
 
+                    var serviceKey = registration.Key;
                     var serviceTypeName = registration.ServiceTypeName;
-                    if (serviceTypeName is not null && implementationTypeName != serviceTypeName)
+                    sb.Append("            services.Add(new global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor(");
+                    sb.Append("serviceType: typeof(global::").Append(serviceTypeName ?? implementationTypeName).Append(')');
+                    if (serviceKey is not null)
                     {
-                        sb.Append("            services.Add(new global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor(");
-                        sb.Append("serviceType: typeof(global::").Append(serviceTypeName).Append(')');
-                        var serviceKey = registration.Key;
-                        if (serviceKey is not null)
-                        {
-                            sb.Append(", serviceKey: ").Append(Convert.ToString(serviceKey, CultureInfo.InvariantCulture));
-                            sb.Append(
-                                    ", factory: static (provider, key) => global::Microsoft.Extensions.DependencyInjection.ServiceProviderKeyedServiceExtensions.GetRequiredKeyedService(provider, typeof(global::")
-                                .Append(implementationTypeName).Append("), key)");
-                        }
-                        else
-                        {
-                            sb.Append(
-                                    ", factory: static (provider) => global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(provider, typeof(global::")
-                                .Append(implementationTypeName).Append("))");
-                        }
-
-                        sb.AppendLine(", lifetime: global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton));");
+                        sb.Append(", serviceKey: ").Append(Convert.ToString(serviceKey, CultureInfo.InvariantCulture));
+                        sb.Append(
+                                ", factory: static (provider, _) => global::Microsoft.Extensions.DependencyInjection.ServiceProviderKeyedServiceExtensions.GetRequiredKeyedService(provider, typeof(global::")
+                            .Append(implementationTypeName).Append("), \"Ws2.DependencyInjection.SharedSingleton\")");
                     }
+                    else
+                    {
+                        sb.Append(
+                                ", factory: static (provider) => global::Microsoft.Extensions.DependencyInjection.ServiceProviderKeyedServiceExtensions.GetRequiredKeyedService(provider, typeof(global::")
+                            .Append(implementationTypeName).Append("), \"Ws2.DependencyInjection.SharedSingleton\")");
+                    }
+
+                    sb.AppendLine(", lifetime: global::Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton));");
                 }
             }
 

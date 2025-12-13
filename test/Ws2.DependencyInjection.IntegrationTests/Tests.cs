@@ -12,16 +12,16 @@ public interface IAbstractServiceA;
 
 public interface IAbstractServiceB;
 
-[Singleton<IAbstractServiceA>]
-[Singleton(ServiceType = typeof(IAbstractServiceB))]
+[Singleton<IAbstractServiceA>(Shared = true)]
+[Singleton(ServiceType = typeof(IAbstractServiceB), Shared = true)]
 public class AbstractServiceImplementation : IAbstractServiceA, IAbstractServiceB;
 
 public interface ISeparateAbstractServiceA;
 
 public interface ISeparateAbstractServiceB;
 
-[Singleton<ISeparateAbstractServiceA>(Shared = false)]
-[Singleton<ISeparateAbstractServiceB>(Shared = false)]
+[Singleton<ISeparateAbstractServiceA>]
+[Singleton<ISeparateAbstractServiceB>]
 public class SeparateAbstractServiceImplementation : ISeparateAbstractServiceA, ISeparateAbstractServiceB;
 
 public interface IComplexSingletonA;
@@ -30,10 +30,18 @@ public interface IComplexSingletonB;
 
 public interface IComplexSingletonC;
 
-[Singleton<IComplexSingletonA>(Shared = false)]
-[Singleton<IComplexSingletonB>]
-[Singleton<IComplexSingletonC>]
+[Singleton<IComplexSingletonA>]
+[Singleton<IComplexSingletonB>(Shared = true)]
+[Singleton<IComplexSingletonC>(Shared = true)]
 public class ComplexSingleton : IComplexSingletonA, IComplexSingletonB,  IComplexSingletonC;
+
+[Singleton]
+[Singleton(ServiceKey = 4)]
+public class KeyedSingleton;
+
+[Singleton(Shared = true)]
+[Singleton(ServiceKey = 4, Shared = true)]
+public class KeyedSharedSingleton;
 
 public class Tests
 {
@@ -108,5 +116,23 @@ public class Tests
             Assert.That(ReferenceEquals(a, b), Is.False);
             Assert.That(ReferenceEquals(b, c), Is.True);
         });
+    }
+
+    [Test]
+    public void TestKeyedSingleton()
+    {
+        var a = provider.GetRequiredService<KeyedSingleton>();
+        var b = provider.GetRequiredKeyedService<KeyedSingleton>(4);
+
+        Assert.That(ReferenceEquals(a, b), Is.False);
+    }
+
+    [Test]
+    public void TestKeyedSharedSingleton()
+    {
+        var a = provider.GetRequiredService<KeyedSharedSingleton>();
+        var b = provider.GetRequiredKeyedService<KeyedSharedSingleton>(4);
+
+        Assert.That(ReferenceEquals(a, b), Is.True);
     }
 }

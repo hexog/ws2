@@ -20,7 +20,7 @@ public class Test
             public interface IServiceC
             
             [Scoped]
-            [Scoped(typeof(IServiceB))]
+            [Scoped(ServiceType = typeof(IServiceB))]
             public class ScopedService : IServiceB, IServiceC;
             
             internal interface IServiceC;
@@ -38,11 +38,19 @@ public class Test
             [Singleton(ServiceKey = "ff")]
             public class ServiceF : ServiceD;
             
+            [Singleton]
+            [Singleton(ServiceType = typeof(ServiceD))]
+            public class ServiceF1 : ServiceD;
+            
+            [Singleton(Shared = true)]
+            [Singleton(ServiceType = typeof(ServiceD), Shared = true)]
+            public class ServiceF2 : ServiceD;
+            
             [Singleton<IServiceB>]
-            [Singleton<IServiceC>(Shared = false)]
+            [Singleton<IServiceC>(Shared = true)]
             public class ServiceG : IServiceB, IServiceC;
             
-            [Singleton<IServiceA>(Shared = false)]
+            [Singleton<IServiceA>]
             [Singleton<IServiceB>]
             [Singleton<IServiceC>]
             public class ServiceH : IServiceA, IServiceB, IServiceC;

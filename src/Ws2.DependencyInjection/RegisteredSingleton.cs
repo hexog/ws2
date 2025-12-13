@@ -1,6 +1,6 @@
 ﻿namespace Ws2.DependencyInjection;
 
-internal struct RegisteredSingleton()
+internal class RegisteredSingleton()
 {
     public readonly List<Registration> Registrations = new(1);
 
