@@ -15,37 +15,28 @@ dotnet add package Ws2.Data
 
 ### Ws2.DependencyInjection
 
+Inside of project `MyCompany.MyProject`:
+
 > Program.cs
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddServicesFromAssembly(typeof(Program).Assembly);
+builder.Services.AddMyCompanyMyProject(); // source generated extension method
 ```
 
 > MyService.cs
 
 ```csharp
-public interface IMyInterface
-{
-}
+public interface IMyInterface;
 
 [ScopedService<IMyInterface>]
-public class MyService : IMyInterface
-{
-}
+public class MyService : IMyInterface;
 
 [SingletonService]
-public class SomeService
-{
-}
+public class SomeService;
 
 [ScopedService]
-public class SomeScopedService
-{
-    public SomeScopedService(IMyInterface myService, SomeService someService)
-    {
-    }
-}
+public class SomeScopedService(IMyInterface myService, SomeService someService);
 ```
 
 Available attributes ([source](Ws2.DependencyInjection/LifetimeAttributes/)):
