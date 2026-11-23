@@ -8,8 +8,8 @@ time; serialization does not inspect model members with reflection.
 Install both packages at the same version:
 
 ```xml
-<PackageReference Include="Ws2.Formats.Cbor.Abstractions" Version="1.2.0" />
-<PackageReference Include="Ws2.Formats.Cbor" Version="1.2.0" PrivateAssets="all" />
+<PackageReference Include="Ws2.Formats.Cbor.Abstractions" Version="2.0.0" />
+<PackageReference Include="Ws2.Formats.Cbor" Version="2.0.0" PrivateAssets="all" />
 ```
 
 The abstractions package supplies attributes, `ICborConverter<T>`, and the `System.Formats.Cbor` dependency. The
