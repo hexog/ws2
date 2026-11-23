@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Ws2.Formats.Cbor.Abstractions" />
+    <Reference Include="Models">
+      <HintPath>../Models/bin/$(Configuration)/net8.0/Models.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,8 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))"
+          Condition="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../')) != ''" />
+  <ItemGroup>
+    <PackageVersion Include="Ws2.Formats.Cbor" Version="1.2.0" />
+    <PackageVersion Include="Ws2.Formats.Cbor.Abstractions" Version="1.2.0" />
+  </ItemGroup>
+</Project>

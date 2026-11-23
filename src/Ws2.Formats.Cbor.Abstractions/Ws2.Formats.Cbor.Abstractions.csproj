@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <RootNamespace>Ws2.Formats.Cbor</RootNamespace>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Attributes and converter contract for the Ws2.Formats.Cbor source generator.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Formats.Cbor" />
+    <None Include="../Ws2.Formats.Cbor/README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+</Project>

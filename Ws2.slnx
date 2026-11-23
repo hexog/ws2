@@ -9,6 +9,8 @@
     <Project Path="src/Ws2.DependencyInjection/Ws2.DependencyInjection.csproj" />
     <Project Path="src/Ws2.EqualityComparison/Ws2.EqualityComparison.csproj" />
     <Project Path="src/Ws2.Hosting/Ws2.Hosting.csproj" />
+    <Project Path="src\Ws2.Formats.Cbor\Ws2.Formats.Cbor.csproj" />
+    <Project Path="src/Ws2.Formats.Cbor.Abstractions/Ws2.Formats.Cbor.Abstractions.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/Ws2.Async.Tests/Ws2.Async.Tests.csproj" />
@@ -16,5 +18,6 @@
     <Project Path="test/Ws2.DependencyInjection.Tests/Ws2.DependencyInjection.Tests.csproj" />
     <Project Path="test/Ws2.EqualityComparison.Tests/Ws2.EqualityComparison.Tests.csproj" />
     <Project Path="test/Ws2.Hosting.Tests/Ws2.Hosting.Tests.csproj" />
+    <Project Path="test/Ws2.Formats.Cbor.Tests/Ws2.Formats.Cbor.Tests.csproj" />
   </Folder>
 </Solution>

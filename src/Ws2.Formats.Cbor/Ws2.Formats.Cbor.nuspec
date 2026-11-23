@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>Ws2</authors>
+    <description>Compile-time CBOR serialization source generator for Ws2.Formats.Cbor.Abstractions.</description>
+    <readme>README.md</readme>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/hexog/ws2</projectUrl>
+    <repository type="git" url="https://github.com/hexog/ws2" />
+    <dependencies>
+      <dependency id="Ws2.Formats.Cbor.Abstractions" version="[$version$]" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="README.md" target="README.md" />
+    <file src="bin/Release/netstandard2.0/Ws2.Formats.Cbor.dll" target="analyzers/dotnet/cs" />
+    <file src="bin/Release/netstandard2.0/Microsoft.Bcl.HashCode.dll" target="analyzers/dotnet/cs" />
+  </files>
+</package>

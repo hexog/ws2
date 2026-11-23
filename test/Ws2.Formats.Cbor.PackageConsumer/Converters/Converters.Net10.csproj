@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Converters</AssemblyName>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="VersionConverter.cs" />
+    <PackageReference Include="Ws2.Formats.Cbor.Abstractions" />
+  </ItemGroup>
+</Project>
